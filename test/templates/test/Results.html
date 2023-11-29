@@ -1,0 +1,73 @@
+{% load custom_filters %}
+{% extends "global/Base.html" %}
+{% load staticfiles otree %}
+
+
+
+{% block title %}
+    第 {{ stage_num }} 階段: 第 {{ stage_round }} 回合
+{% endblock %}
+
+{% block content %}
+    {% if player.id_in_group == 1 %}
+        {% if group.worker_invest %}
+            <p>您決定投入受訓。</p>
+        {% else %}
+            <p>您決定不投入受訓。</p>
+        {% endif %}
+
+        {% if group.firm_hire %}
+            <p>雇主決定錄取您。</p>
+        {% else %}
+            <p>雇主決定不錄取您。</p>
+        {% endif %}
+        {%  if group.use_worker_belief %}
+            <p><b>您於本回合的雇用決策獲得 {{ worker_normal_payoff }}。</b></p>
+        {% else %}
+            <p><b>您於本回合的雇用決策獲得 {{ worker_payoff }}。</b></p>
+        {% endif%}
+        {%  if group.use_firm_belief %}
+            <p>雇主於本回合的雇用決策獲得 {{ firm_normal_payoff }}。</p>
+        {% else %}
+            <p>雇主於本回合的雇用決策獲得 {{ firm_payoff }}。</p>
+        {% endif%}
+    {% else %}
+        {% if group.worker_invest %}
+            <p>您配對到{{worker_color}}求職者，求職者決定投入受訓。</p>
+        {% else %}
+            <p>您配對到{{worker_color}}求職者，求職者決定不投入受訓。</p>
+        {% endif %}
+
+        {% if group.firm_hire %}
+            <p>您決定錄取求職者。</p>
+        {% else %}
+            <p>您決定不錄取求職者。</p>
+        {% endif %}
+
+        {%  if group.use_worker_belief %}
+            <p>求職者於本回合的雇用決策獲得 {{ worker_normal_payoff}}。</p>
+        {% else %}
+            <p>求職者於本回合的雇用決策獲得 {{ worker_payoff}}</p>
+        {% endif%}
+        {%  if group.use_firm_belief %}
+            <p><b>您於本回合的雇用決策獲得 {{ firm_normal_payoff}}。</b></p>
+        {% else %}
+            <p><b>您於本回合的雇用決策獲得 {{ firm_payoff}}。 </b></p>
+        {% endif%}
+    {% endif %}
+
+
+
+    {% next_button %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function (event) {
+            // Change the text of the "Next" button to "下一頁"
+            let nextButton = document.querySelector('.otree-btn-next');
+            if (nextButton) {
+                nextButton.innerText = '下一頁';
+            }
+        });
+    </script>
+{% endblock %}
+
+
