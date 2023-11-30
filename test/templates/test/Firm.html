@@ -101,6 +101,29 @@
             <p>{{firm_see_type}}</p>
             <p>{{firm_see_signal}}</p>    
             <p style="margin-bottom: 30px;"></p>
+            {% for field in form %}
+            <div class="row">
+                {% if field.name == 'firm_hire' %}
+                    <div class="col-1-2"> 
+                        <p>您打算錄取求職者嗎?</p>       
+                        {{ field }}        
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}                       
+            <!-- {% for field in form %}
+            <div class="row">
+                {% if field.name == 'firm_hire' %}
+                    <div class="col-1-2"> 
+                        <p>您打算錄取求職者嗎?</p>       
+                        {{ field }}        
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}  -->
+        <button type="button" class="btn btn-primary" onclick="submitForm()">下一頁</button>
+        </div>
+        <div class="col-1-2">
             <table>
                 <tr align="center">
                     <th>&nbsp;</th>
@@ -143,132 +166,110 @@
                     <td>{{ avg_hiring_rate }}</td>
                 </tr>
             </table>   
-            {{ block firm_investment_belief_content }}
-            <input type="hidden" name="firm_investment_belief">
-            {{ formfield_errors 'firm_investment_belief' }}
-
-            <table class="table table-striped" style="border-spacing: 0;">
-                <colgroup>
-                    <col width="16%">
-                    <col width="38%">
-                    <col width="10%">
-                    <col width="38%">
-                </colgroup>
-                <tr>
-                    <td></td>
-                    <td align="right"><b>預測</b></td>
-                    <td></td>
-                    <td align="left"><b>福袋</b></td>
-                </tr>
-                {{ for amount in right_side_amounts }}
-                <tr>   
-                    <td align="right">    
-                        第<b>{{amount}}</b>行:                      
-                    <td align="right">                            
-                        <b>求職者有受訓</b>的話獲得 200 法幣                                                                           
-                    <td align="middle">
-                        <input type="radio"
-                            value="left"
-                            name="{{ amount }}" data-amount="{{ amount }}"
-                            {% if amount == 0 %}checked{% endif %}
-                            {% if amount == 10 %}disabled{% endif %}
-                            required>&nbsp;&nbsp;
-                        <input type="radio"
-                            name="{{ amount }}"
-                            value="right" data-amount="{{ amount }}"
-                            {% if amount == 0 %}disabled{% endif %}
-                            {% if amount == 10 %}checked{% endif %}
-                            required>&nbsp;&nbsp;
-                            <span id="additional-choice-{{ amount }}" style="display: none;">
-                                <!-- Display a dropdown for intermediate choices -->
-                                <select name="{{ amount }}_additional_choice">
-                                    {% if amount == 0 %}
-                                    <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(1, 11) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>
-                                        {% endfor %}
-                                    {% elif amount == 1 %}
-                                        <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(11, 21) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>                                                
-                                        {% endfor %}
-                                    {% elif amount == 2 %}
-                                        <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(21, 31) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>                                                
-                                        {% endfor %}
-                                    {% elif amount == 3 %}
-                                        <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(31, 41) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>                                                
-                                        {% endfor %}
-                                    {% elif amount == 4 %}
-                                        <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(41, 51) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>                                                
-                                        {% endfor %}
-                                    {% elif amount == 5 %}
-                                        <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(51, 61) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>                                                
-                                        {% endfor %}
-                                    {% elif amount == 6 %}
-                                        <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(61, 71) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>                                                
-                                        {% endfor %}
-                                    {% elif amount == 7 %}
-                                        <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(71, 81) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>                                                
-                                        {% endfor %}
-                                    {% elif amount == 8 %}
-                                        <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(81, 91) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>                                                
-                                        {% endfor %}
-                                    {% elif amount == 9 %}
-                                        <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
-                                        {% for choice in range(91, 101) %}
-                                            <option value="{{ choice }}">{{ choice }}</option>                                                
-                                        {% endfor %}
-                                    {% endif %}
-                                </select>
-                            </span>                                
-                    </td>
-                    <td align="left">
-                        <b>{% if amount == 0 %}{{ amount }}{% else %}{{ amount }}0{% endif %}%</b> 機率獲得 200 法幣                            
-                </tr>
-                {{ endfor }}
-            </table>
-            {{ endblock }}    
-            <!-- {% for field in form %}
-            <div class="row">
-                {% if field.name == 'firm_hire' %}
-                    <div class="col-1-2"> 
-                        <p>您打算錄取求職者嗎?</p>       
-                        {{ field }}        
-                    </div>
-                {% endif %}
-            </div>
-            {% endfor %}  -->
-        <button type="button" class="btn btn-primary" onclick="submitForm()">下一頁</button>
-        </div>
-        <div class="col-1-2">
-            {% for field in form %}
-            <div class="row">
-                {% if field.name == 'firm_hire' %}
-                    <div class="col-1-2"> 
-                        <p>您打算錄取求職者嗎?</p>       
-                        {{ field }}        
-                    </div>
-                {% endif %}
-            </div>
-            {% endfor %}
             
         </div>
 <div class="row">
 {% endblock %}
+
+{{ block firm_investment_belief_content }}
+    <input type="hidden" name="firm_investment_belief">
+    {{ formfield_errors 'firm_investment_belief' }}
+
+    <table class="table table-striped" style="border-spacing: 0;">
+        <colgroup>
+            <col width="16%">
+            <col width="38%">
+            <col width="10%">
+            <col width="38%">
+        </colgroup>
+        <tr>
+            <td></td>
+            <td align="right"><b>預測</b></td>
+            <td></td>
+            <td align="left"><b>福袋</b></td>
+        </tr>
+        {{ for amount in right_side_amounts }}
+        <tr>   
+            <td align="right">    
+                第<b>{{amount}}</b>行:                      
+            <td align="right">                            
+                <b>求職者有受訓</b>的話獲得 200 法幣                                                                           
+            <td align="middle">
+                <input type="radio"
+                    value="left"
+                    name="{{ amount }}" data-amount="{{ amount }}"
+                    {% if amount == 0 %}checked{% endif %}
+                    {% if amount == 10 %}disabled{% endif %}
+                    required>&nbsp;&nbsp;
+                <input type="radio"
+                    name="{{ amount }}"
+                    value="right" data-amount="{{ amount }}"
+                    {% if amount == 0 %}disabled{% endif %}
+                    {% if amount == 10 %}checked{% endif %}
+                    required>&nbsp;&nbsp;
+                    <span id="additional-choice-{{ amount }}" style="display: none;">
+                        <!-- Display a dropdown for intermediate choices -->
+                        <select name="{{ amount }}_additional_choice">
+                            {% if amount == 0 %}
+                            <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(1, 11) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>
+                                {% endfor %}
+                            {% elif amount == 1 %}
+                                <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(11, 21) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>                                                
+                                {% endfor %}
+                            {% elif amount == 2 %}
+                                <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(21, 31) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>                                                
+                                {% endfor %}
+                            {% elif amount == 3 %}
+                                <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(31, 41) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>                                                
+                                {% endfor %}
+                            {% elif amount == 4 %}
+                                <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(41, 51) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>                                                
+                                {% endfor %}
+                            {% elif amount == 5 %}
+                                <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(51, 61) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>                                                
+                                {% endfor %}
+                            {% elif amount == 6 %}
+                                <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(61, 71) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>                                                
+                                {% endfor %}
+                            {% elif amount == 7 %}
+                                <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(71, 81) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>                                                
+                                {% endfor %}
+                            {% elif amount == 8 %}
+                                <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(81, 91) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>                                                
+                                {% endfor %}
+                            {% elif amount == 9 %}
+                                <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
+                                {% for choice in range(91, 101) %}
+                                    <option value="{{ choice }}">{{ choice }}</option>                                                
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </span>                                
+            </td>
+            <td align="left">
+                <b>{% if amount == 0 %}{{ amount }}{% else %}{{ amount }}0{% endif %}%</b> 機率獲得 200 法幣                            
+        </tr>
+        {{ endfor }}
+    </table>
+{{ endblock }}    
 
 {% block scripts %}
 <script>
