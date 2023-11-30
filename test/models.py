@@ -187,14 +187,14 @@ class Subsession(BaseSubsession):
 
         if self.round_number == 1:
             for player in self.get_players():
-                player.paying_round = random.randint(1, C.NUM_ROUNDS)
+                player.paying_round = random.randint(1, self.num_rounds)
                 player.lottery_1 = random.choice(range(10, 101, 10))
                 player.lottery_2 = random.randint(0, 9)
                 player.lottery_3 = random.randint(1, 100)
                 player.choose_task = random.randint(1, 2)
                 player.risk_1 = random.randint(1, 2)
                 player.risk_2 = random.randint(1, 10)
-                player.belief_round = random.choice([round_num for round_num in range(1, C.NUM_ROUNDS + 1) if round_num != player.paying_round])
+                player.belief_round = random.choice([round_num for round_num in range(1, self.num_rounds + 1) if round_num != player.paying_round])
             count = 0
             color_list = []
             for g in self.get_groups():
