@@ -206,7 +206,7 @@ class WaitForWorkers(WaitPage):
     wait_for_all_groups = False  # Set this to False to only wait for paired workers
     
     title_text = ""
-    body_text = "請稍待其他玩家做決策，謝謝" 
+    body_text = "請稍待求職者做決策，謝謝！" 
     def is_displayed(self):
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
         return self.player.id_in_group == 2 and self.round_number > third_stage_start            
@@ -646,14 +646,14 @@ class TaskWaitPage(WaitPage):
     
 class ResultsWaitPage(WaitPage):
     title_text = ""
-    body_text = "請稍待其他玩家做決策，謝謝!"
+    body_text = "請稍待其他人，謝謝！"
     def after_all_players_arrive(self):
         self.group.set_payoffs()
 
 class SessionWideWaitPage(WaitPage):
     wait_for_all_groups = True
     title_text = ""
-    body_text = "請稍待其他玩家，謝謝!"    
+    body_text = "請稍待其他人，謝謝！"    
    
         
 class Results(Page):
