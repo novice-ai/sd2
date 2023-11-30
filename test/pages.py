@@ -809,7 +809,7 @@ page_sequence = [
     Firm_Task_1,
     Worker_Task_2,    
     Firm_Task_2,
-    ResultsWaitPage,
+    TaskWaitPage,
     Payoffs,
     SessionWideWaitPage
 ]
