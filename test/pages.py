@@ -541,7 +541,7 @@ class Firm(Page):
         if third_stage_start < self.round_number:            
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
-                firm_see_type= "您配對到的求職者決定<b>揭露</b>其類別。"
+                firm_see_type= "您配對到的求職者決定<b>揭露</b>其類別為 "+str(self.group.worker_color)+" 。"
             else:
                 firm_see_type= "您配對到的求職者決定<b>不揭露</b>其類別。"
 
@@ -599,7 +599,7 @@ class Instructions(Page):
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
         fourth_stage_start = (
             self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
-        return self.round_number == second_stage_start or self.round_number == third_stage_start or self.round_number == fourth_stage_start ##WW:commented out or self.round_number == self.subsession.num_rounds" 
+        return self.round_number == 1 or self.round_number == 1+self.subsession.num_first_stage_rounds or self.round_number == 
 
     def vars_for_template(self):
 
@@ -610,19 +610,21 @@ class Instructions(Page):
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
         fourth_stage_start = (
             self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
-        if self.round_number == second_stage_start:
+        if self.round_number == 1:
                 instructions_text = "您即將進入實驗的第一階段。"
-                instructions_text_2 = "本階段 GREEN 求職者的受訓成本為 200 法幣 (c = 200)，PURPLE 求職者的受訓成本為 600 法幣 (c = 600)。"   
-        elif self.round_number == third_stage_start:
+                instructions_text_2 = "本階段 GREEN 求職者的受訓成本為 200 法幣 (c = 200)，PURPLE 求職者的受訓成本為 600 法幣 (c = 600)。" 
+                instructions_text_3 = "本階段雇主<b>可以看見</b>配對到的求職者之類別。"  
+        elif self.round_number == 1+self.subsession.num_first_stage_rounds:
                 instructions_text = "您即將進入實驗的第二階段。"
                 instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
-        elif self.round_number == fourth_stage_start:
+                instructions_text_3 = "本階段雇主<b>可以看見</b>配對到的求職者之類別。"
+        elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds:
                   #WW: commented out "instructions_text = "You are entering Stage 3 of the experiment.""
                 instructions_text = "您即將進入實驗的第三階段。"
                 instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
                 instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別，但求職者可以決定主動<b>揭露</b>其類別，亦可<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
            
-        elif self.round_number == self.subsession.num_rounds:
+        elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds:
              #WW: commented out "  instructions_text = "You have finished the main portion of the experiment.  You will now be asked to complete two short tasks.  One of these two tasks will be randomly selected for payment.  Your earnings from the randomly selected task will be added to your total earnings from the experiment.""
                 instructions_text = "您即將進入實驗的第四階段。"
                 instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
