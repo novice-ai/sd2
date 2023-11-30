@@ -642,7 +642,9 @@ class TaskWaitPage(WaitPage):
     title_text = ""
     body_text = "正在計算報酬..."
     def after_all_players_arrive(self):
-        self.group.set_payoffs()
+        # Iterate through all groups and call set_payoffs
+        for player in self.subsession.get_players():
+            player.set_payoffs()
     
 class ResultsWaitPage(WaitPage):
     title_text = ""
@@ -654,7 +656,7 @@ class SessionWideWaitPage(WaitPage):
     wait_for_all_groups = True
     title_text = ""
     body_text = "請稍待其他人，謝謝！"    
-   
+
         
 class Results(Page):
     def is_displayed(self):
