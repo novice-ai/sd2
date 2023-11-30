@@ -35,21 +35,20 @@
                 let min = 0; // Set your min value
                 let max = 200; // Set your max value
 
-                for (let input of allInputs) {
-                    if (input.hasAttribute('required') && !input.value.trim()) {
-                        incompleteFields.push(input);
-                    }                   
-                    let inputValue = input.value.trim();
+                // for (let input of allInputs) {
+                //     if (input.hasAttribute('required') && !input.value.trim()) {
+                //         incompleteFields.push(input);
+                //     }                   
 
-                    if (input.name === 'worker_task_1') {
-                        let inputValue = parseInt(input.value);
-                        if (isNaN(inputValue) || inputValue < min || inputValue > max) {
-                            event.preventDefault();
-                            alert('請填入 0 至 200 的整數');
-                            return; // Stop further processing if needed
-                        }
-                    }
-                }
+                //     if (input.name === 'worker_task_1') {
+                //         let inputValue = parseInt(input.value);
+                //         if (isNaN(inputValue) || inputValue < min || inputValue > max) {
+                //             event.preventDefault();
+                //             alert('請填入 0 至 200 的整數');
+                //             return; // Stop further processing if needed
+                //         }
+                //     }
+                // }
                 
 
                 if (incompleteFields.length > 0) {
