@@ -25,7 +25,7 @@ class C(BaseConstants):
     # number of players in a group - SHOULD ALWAYS BE 2
     PLAYERS_PER_GROUP = 2
     # the number of rounds to play - should be a multiple of 4
-    NUM_ROUNDS = 4
+    NUM_ROUNDS = 40
     # the costs of training in the different treatments
     FIRST_COST_OF_TRAINING_GREEN = 200
     FIRST_COST_OF_TRAINING_PURPLE = 600
