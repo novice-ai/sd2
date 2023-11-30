@@ -637,6 +637,8 @@ class Instructions(Page):
         }
 
 class TaskWaitPage(WaitPage):
+    def is_displayed(self):
+        return self.round_number == self.subsession.num_rounds
     title_text = ""
     body_text = "正在計算報酬..."
     def after_all_players_arrive(self):
@@ -651,11 +653,8 @@ class ResultsWaitPage(WaitPage):
 class SessionWideWaitPage(WaitPage):
     wait_for_all_groups = True
     title_text = ""
-    body_text = "請稍待其他玩家做決策，謝謝!"
-    def after_all_players_arrive(self):
-        # Iterate through all groups and call set_payoffs
-        for player in self.subsession.get_players():
-            player.set_payoffs()
+    body_text = "請稍待其他玩家，謝謝!"    
+   
         
 class Results(Page):
     def is_displayed(self):
@@ -797,6 +796,7 @@ class Payoffs(Page):
 
 page_sequence = [
     Begin_Experiment,
+    SessionWideWaitPage,
     Instructions,
     Reveal_Signal,
     WaitForWorkers,
@@ -810,6 +810,5 @@ page_sequence = [
     Worker_Task_2,    
     Firm_Task_2,
     TaskWaitPage,
-    Payoffs,
-    SessionWideWaitPage
+    Payoffs
 ]
