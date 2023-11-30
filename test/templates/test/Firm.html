@@ -142,20 +142,7 @@
                     <td>{{ avg_invest_rate }}</td>
                     <td>{{ avg_hiring_rate }}</td>
                 </tr>
-            </table>       
-            {% for field in form %}
-            <div class="row">
-                {% if field.name == 'firm_hire' %}
-                    <div class="col-1-2"> 
-                        <p>您打算錄取求職者嗎?</p>       
-                        {{ field }}        
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %} 
-        <button type="button" class="btn btn-primary" onclick="submitForm()">下一頁</button>
-        </div>
-        <div class="col-1-2">
+            </table>   
             {{ block firm_investment_belief_content }}
             <input type="hidden" name="firm_investment_belief">
             {{ formfield_errors 'firm_investment_belief' }}
@@ -254,7 +241,31 @@
                 </tr>
                 {{ endfor }}
             </table>
-        {{ endblock }}
+            {{ endblock }}    
+            <!-- {% for field in form %}
+            <div class="row">
+                {% if field.name == 'firm_hire' %}
+                    <div class="col-1-2"> 
+                        <p>您打算錄取求職者嗎?</p>       
+                        {{ field }}        
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}  -->
+        <button type="button" class="btn btn-primary" onclick="submitForm()">下一頁</button>
+        </div>
+        <div class="col-1-2">
+            {% for field in form %}
+            <div class="row">
+                {% if field.name == 'firm_hire' %}
+                    <div class="col-1-2"> 
+                        <p>您打算錄取求職者嗎?</p>       
+                        {{ field }}        
+                    </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
         </div>
 <div class="row">
 {% endblock %}
