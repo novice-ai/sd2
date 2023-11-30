@@ -682,7 +682,32 @@ class Results(Page):
         elif fourth_stage_start < self.round_number <= self.subsession.num_rounds:
             stage_num = 4
             stage_round = self.round_number - fourth_stage_start
-
+        your_decision = ""
+        their_decision = ""  
+        your_payoff = ""
+        their_payoff = ""  
+        if self.player.id_in_group == 1:
+            your_payoff = "您於本回合的應徵聘僱決策獲得 "+  str(self.group.worker_normal_payoff)+"。"
+            their_payoff = "雇主於本回合的應徵聘僱決策獲得 "+str(self.group.firm_normal_payoff)+"。"
+            if self.group.firm_hire:
+                their_decision = "雇主決定錄取您。"
+            else: 
+                their_decision = "雇主決定不錄取您。"
+            if self.group.worker_invest:
+                your_decision = "您決定投入受訓。"
+            else: 
+                your_decision = "您決定不投入受訓。"
+        elif self.player.id_in_group == 2:
+            your_payoff = "您於本回合的應徵聘僱決策獲得 "+  str(self.group.firm_normal_payoff)+"。"
+            their_payoff = "求職者於本回合的應徵聘僱決策獲得 "+str(self.group.worker_normal_payoff)+"。"
+            if self.group.firm_hire:
+                your_decision = "您決定錄取求職者。"
+            else: 
+                your_decision = "您決定錄取求職者。"
+            if self.group.worker_invest:
+                their_decision = "您配對到"+str(self.group.worker_color)+"求職者，求職者決定投入受訓。"
+            else: 
+                their_decision = "您配對到"+str(self.group.worker_color)+"求職者，求職者決定不投入受訓。"
         return {
            # 'firm_belief_payoff': str(self.group.firm_belief_payoff),
       #      'firm_payoff': str(self.group.get_player_by_role('Firm').potential_payoff),
@@ -692,7 +717,11 @@ class Results(Page):
             'worker_normal_payoff': str(self.group.worker_normal_payoff),
             'stage_num': str(stage_num),
             'stage_round': str(stage_round),
-            'worker_color': str(self.group.worker_color)
+            'worker_color': str(self.group.worker_color),
+            'your_decision': your_decision,
+            'their_decision': their_decision,
+            'your_payoff': your_payoff,
+            'their_payoff': their_payoff
         }
 
 class Task_Intro(Page):
