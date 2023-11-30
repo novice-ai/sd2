@@ -60,7 +60,7 @@ class Begin_Experiment(Page):
 
     def vars_for_template(self):
 
-        instructions_text = "請等候實驗者告知「實驗正式開始」，再按「下一頁」，謝謝!"
+        instructions_text = "請等實驗者告知「實驗正式開始」，再按「下一頁」，謝謝!"
 
         return {
             'instructions_text': instructions_text,
@@ -324,7 +324,7 @@ class Worker(Page):
         if third_stage_start < self.round_number:
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
-                worker_send_signal= "您決定<b>傳送</b>「我願意投入受訓」之訊息。"              
+                worker_send_signal= "您決定<b>傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"              
                 table_invest_hire = "{0} - c - 10, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0} - 10, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -333,7 +333,7 @@ class Worker(Page):
                 table_not_invest_not_hire = "{0} - 10,{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
             else:
-                worker_send_signal= "您決定<b>不傳送</b>「我願意投入受訓」之訊息。"               
+                worker_send_signal= "您決定<b>不傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"               
                 table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -484,13 +484,13 @@ class Firm(Page):
             stage_num = 1
             stage_round = self.round_number
             #WW:
-            extra_text_type = "您被配對到" + str(self.group.worker_color) + "的求職者。"
+            extra_text_type = "您配對到" + str(self.group.worker_color) + "的求職者。"
         elif second_stage_start < self.round_number <= third_stage_start:
             green_cost = C.SECOND_COST_OF_TRAINING
             purple_cost = C.SECOND_COST_OF_TRAINING
             stage_num = 2
             stage_round = self.round_number - second_stage_start
-            extra_text_type = "您被配對到" + str(self.group.worker_color) + "的求職者。"
+            extra_text_type = "您配對到" + str(self.group.worker_color) + "的求職者。"
         elif third_stage_start < self.round_number <= fourth_stage_start:
             green_cost = C.THIRD_COST_OF_TRAINING
             purple_cost = C.THIRD_COST_OF_TRAINING
@@ -509,7 +509,7 @@ class Firm(Page):
         if third_stage_start < self.round_number:            
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
-                firm_see_signal= "您配對到的求職者決定<b>傳送</b>「我願意投入受訓」之訊息。"
+                firm_see_signal= "您配對到的求職者決定<b>傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"
                 table_invest_hire = "{0} - c - 10, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0} - 10, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -518,7 +518,7 @@ class Firm(Page):
                 table_not_invest_not_hire = "{0}-10,{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
             else:
-                firm_see_signal= "您配對到的求職者決定<b>不傳送</b>「我願意投入受訓」之訊息。"
+                firm_see_signal= "您配對到的求職者決定<b>不傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"
                 table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
