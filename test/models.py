@@ -62,7 +62,7 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = 2
     # the number of rounds to play - should be a multiple of 4
     ##change to 40
-    NUM_ROUNDS = 4
+    NUM_ROUNDS = 40
     # the costs of training in the different treatments
     ##WW: third round should be color-blind round
     FIRST_COST_OF_TRAINING_GREEN = 200

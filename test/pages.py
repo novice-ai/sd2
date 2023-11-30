@@ -634,13 +634,11 @@ class Instructions(Page):
             'instructions_text_3': instructions_text_3
         }
 
-class Experiment_Wait(WaitPage):
-    wait_for_all_groups = True
+class TaskWaitPage(WaitPage):
     title_text = ""
-    body_text = "實驗即將開始，請稍候，謝謝!"
+    body_text = "正在計算報酬..."
     def after_all_players_arrive(self):
-        for player in self.subsession.get_players():
-            player.set_payoffs()
+        self.group.set_payoffs()
     
 class ResultsWaitPage(WaitPage):
     title_text = ""
@@ -768,20 +766,19 @@ class Payoffs(Page):
 
 page_sequence = [
     Begin_Experiment,
-#     Experiment_Wait,
     Instructions,
     Reveal_Signal,
     WaitForWorkers,
     Worker,
     Firm,
     ResultsWaitPage,
-    Results,
-    SessionWideWaitPage,
+    Results,    
     Task_Intro,
     Worker_Task_1,
     Firm_Task_1,
     Worker_Task_2,    
     Firm_Task_2,
-    SessionWideWaitPage,
-    Payoffs
+    ResultsWaitPage,
+    Payoffs,
+    SessionWideWaitPage
 ]
