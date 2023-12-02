@@ -191,8 +191,8 @@
                 <td colspan="4">
                     <div id="messages-{{ amount }}" style="display: none;">
                         {% if amount == 0 %}
-                        <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 與 10% 之間。</p>
-                        <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                            <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 與 10% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
                         {% elif amount == 1 %}
                         <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 10% 與 20% 之間。</p>
                         <p>請點選該行跳出的選項，進行更精確的決策。</p>
@@ -250,9 +250,6 @@
                                     {% for choice in range(1, 11) %}
                                         <option value="{{ choice }}">{{ choice }}</option>
                                     {% endfor %}
-                                    <div id="messages-{{ amount }}" style="display: none;">
-                                        <p>You selected amount {{ amount }}. This is a custom message.</p>
-                                    </div>
                                 {% elif amount == 1 %}
                                     <option value="" selected disabled hidden></option> <!-- Add this line for an empty initial value -->
                                     {% for choice in range(11, 21) %}
