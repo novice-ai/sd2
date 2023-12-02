@@ -173,7 +173,7 @@
         <input type="hidden" name="firm_investment_belief">
         {{ formfield_errors 'firm_investment_belief' }}
         <!-- Conditional Messages Section -->
-        <div>
+        <div id="conditional-message" style="display: none;">
             {% for amount in right_side_amounts %}      
                 {% if amount == 0 %}                    
                     <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
@@ -309,12 +309,14 @@
         </div>
         {{ endblock }}  
     </div>
-    <button type="button" class="btn btn-primary" onclick="submitForm()">下一頁</button>
+    <button type="button" class="btn btn-primary" onclick="submitForm()">送出</button>
+    <p style="color: gray; margin-top: 5px;">（送出後不得再修改）</p>
+
 {% endblock %}
 
   
 
-{% block scripts %}
+<!-- {% block scripts %}
 <script>
     let allRadios = document.querySelectorAll('input[type=radio]')
     let allAdditionalChoiceSpans = document.querySelectorAll('span[id^="additional-choice-"]');
@@ -430,7 +432,139 @@
     });
 
 </script>
+{% endblock %} -->
+
+{% block scripts %}
+<script>
+    let allRadios = document.querySelectorAll('input[type=radio]')
+    let allAdditionalChoiceSpans = document.querySelectorAll('span[id^="additional-choice-"]');
+    let conditionalLineMessage = document.getElementById('conditional-line-message');
+
+    function submitForm() {
+        let form = document.getElementById('form');
+
+        // Check if the dropdown is empty
+        let dropdownValues = Array.from(allAdditionalChoiceSpans)
+            .map(span => span.querySelector('select').value)
+            .filter(value => value !== '');
+
+        // Check if all required fields are filled
+        let isFormValid = Array.from(form.elements)
+            .filter(field => field.hasAttribute('required'))
+            .every(field => field.checkValidity());
+
+        if (dropdownValues.length === 0 || !isFormValid) {
+            // Display a custom alert or handle the case where the form is incomplete
+            alert('請完整回答再前往下一頁');
+            return;
+        }
+
+        // Get the smallest amount checked on the right
+        let formField = document.querySelector('[name="firm_investment_belief"]');
+        let smallestAmountCheckedRight = parseInt(formField.value) || 0;
+
+        // Calculate the new firm_investment_belief value
+        let calculatedValue = smallestAmountCheckedRight * 10;
+        calculatedValue += parseInt(dropdownValues[0]);
+
+        // Update the hidden input value
+        formField.value = calculatedValue;
+
+        // Proceed with form submission
+        form.submit();
+    }
+
+    function onRadioClick(evt) {
+        let clickedRadio = evt.target;
+        let afterClickedRadio = false;
+        let clickedRightRadio = clickedRadio.value === 'right';
+
+        for (let aRadio of allRadios) {
+            if (aRadio === clickedRadio) {
+                afterClickedRadio = true;
+                continue;
+            }
+            if (clickedRightRadio && afterClickedRadio && aRadio.value === 'right') {
+                aRadio.checked = true;
+            }
+            if (!clickedRightRadio && !afterClickedRadio && aRadio.value === 'left') {
+                aRadio.checked = true;
+            }
+        }
+
+        // Hide all other dropdowns
+        for (let span of allAdditionalChoiceSpans) {
+            span.style.display = 'none';
+        }
+
+        // Show the dropdown for the checked amount or the current amount on left click
+        let amount = clickedRadio.dataset.amount;
+
+        // Exclude firm_hire from triggering the dropdown
+        if (clickedRadio.name !== 'firm_hire') {
+            if (clickedRightRadio && amount > 0) {
+                document.getElementById('additional-choice-' + (amount - 1)).style.display = 'inline-block';
+            } else if (!clickedRightRadio && amount >= 0) {
+                document.getElementById('additional-choice-' + amount).style.display = 'inline-block';
+            }
+        }
+
+        if (document.querySelector('.amount-radio:checked')) {
+            conditionalLineMessage.style.display = 'block';
+        } else {
+            conditionalLineMessage.style.display = 'none';
+        }
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+        // Change the error message for the firm_hire field
+        let firmField = document.getElementsByName('firm_hire')[0];
+        if (firmField) {
+            firmField.addEventListener('invalid', function (event) {
+                event.preventDefault();
+                // Customize the error message or set it to an empty string to remove it
+                event.target.setCustomValidity('Your custom error message goes here');
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+        for (let radio of document.querySelectorAll('input[type=radio]')) {
+            // Exclude "firm_hire" from the click event
+            if (radio.name !== 'firm_hire') {
+                radio.onchange = onRadioClick;
+            }
+        }
+
+        let radios = document.querySelectorAll('input[type=radio][value="right"]');
+        for (let radio of radios) {
+            radio.addEventListener('change', function () {
+                let amount = radio.getAttribute('data-amount');
+                let additionalChoiceSpan = document.getElementById('additional-choice-' + amount);
+
+                // Exclude "firm_hire" from the change event
+                if (radio.name !== 'firm_hire') {
+                    // Check if the clicked radio is 'right' and amount is greater than 0
+                    // If true, display the dropdown for the preceding amount
+                    if (radio.checked && amount > 0) {
+                        document.getElementById('additional-choice-' + (amount - 1)).style.display = 'inline-block';
+                    } else {
+                        additionalChoiceSpan.style.display = 'none';
+                    }
+                }
+
+                // Show or hide the conditional line message based on the selected amount
+                if (amount === 'your_condition_here') {
+                    conditionalLineMessage.style.display = 'block';
+                } else {
+                    conditionalLineMessage.style.display = 'none';
+                }
+            });
+        }
+    });
+
+</script>
 {% endblock %}
+
 
 
 
