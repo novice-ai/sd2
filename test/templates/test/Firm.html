@@ -172,6 +172,14 @@
         {{ block firm_investment_belief_content }}
         <input type="hidden" name="firm_investment_belief">
         {{ formfield_errors 'firm_investment_belief' }}
+        <!-- Conditional Messages Section -->
+        <div>
+            {% for amount in right_side_amounts %}
+                {% if amount == selected_amount %}
+                    <p>You selected the {{ amount }}{% if amount != 0 %}0{% endif %} option with {{ amount }}% probability.</p>
+                {% endif %}
+            {% endfor %}
+        </div>
 
         <table class="table table-striped" style="border-spacing: 0;">
             <colgroup>
