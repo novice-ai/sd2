@@ -187,6 +187,14 @@
                 <td align="left"><b>福袋</b></td>
             </tr>
             {{ for amount in right_side_amounts }}
+            <tr>
+                <td colspan="4">
+                    <div id="messages-{{ amount }}" style="display: none;">
+                        <p>您目前選擇第{{ amount }}行，表示您認為求職者決定受訓的機率介於 {{ amount * 10 }}% 與 {{ (amount + 1) * 10 }}% 之間。</p>
+                        <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                    </div>
+                </td>
+            </tr>
             <tr>   
                 <td align="right">    
                     第<b>{{amount}}</b>行:                      
@@ -284,6 +292,7 @@
 <script>
     let allRadios = document.querySelectorAll('input[type=radio]')
     let allAdditionalChoiceSpans = document.querySelectorAll('span[id^="additional-choice-"]');
+    let allMessages = document.querySelectorAll('div[id^="messages-"]');
 
     function submitForm() {
         let form = document.getElementById('form');
@@ -313,7 +322,7 @@
         calculatedValue += parseInt(dropdownValues[0]);
 
         // Update the hidden input value
-        forminputs.firm_investment_belief.value = calculatedValue;
+        formField.value = calculatedValue;
 
         // Proceed with form submission
         form.submit();
@@ -337,20 +346,26 @@
             }
         }
 
-        // Hide all other dropdowns
+        // Hide all other dropdowns and messages
         for (let span of allAdditionalChoiceSpans) {
             span.style.display = 'none';
         }
 
-        // Show the dropdown for the checked amount or the current amount on left click
+        for (let message of allMessages) {
+            message.style.display = 'none';
+        }
+
+        // Show the dropdown and message for the checked amount or the current amount on left click
         let amount = clickedRadio.dataset.amount;
 
         // Exclude firm_hire from triggering the dropdown
         if (clickedRadio.name !== 'firm_hire') {
             if (clickedRightRadio && amount > 0) {
                 document.getElementById('additional-choice-' + (amount - 1)).style.display = 'inline-block';
+                document.getElementById('messages-' + amount).style.display = 'block';
             } else if (!clickedRightRadio && amount >= 0) {
                 document.getElementById('additional-choice-' + amount).style.display = 'inline-block';
+                document.getElementById('messages-' + amount).style.display = 'block';
             }
         }
     }
@@ -380,15 +395,18 @@
             radio.addEventListener('change', function () {
                 let amount = radio.getAttribute('data-amount');
                 let additionalChoiceSpan = document.getElementById('additional-choice-' + amount);
+                let message = document.getElementById('messages-' + amount);
 
                 // Exclude "firm_hire" from the change event
                 if (radio.name !== 'firm_hire') {
                     // Check if the clicked radio is 'right' and amount is greater than 0
-                    // If true, display the dropdown for the preceding amount
+                    // If true, display the dropdown and message for the preceding amount
                     if (radio.checked && amount > 0) {
                         document.getElementById('additional-choice-' + (amount - 1)).style.display = 'inline-block';
+                        document.getElementById('messages-' + (amount - 1)).style.display = 'block';
                     } else {
                         additionalChoiceSpan.style.display = 'none';
+                        message.style.display = 'none';
                     }
                 }
             });
@@ -396,7 +414,8 @@
     });
 
 </script>
-{% endblock %} 
+{% endblock %}
+
 
 
 
