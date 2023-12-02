@@ -16,9 +16,8 @@
         </div>
     </div>
 
-    <div class="row">
-        {% next_button %}
-    </div>
+    <button type="button" class="btn btn-primary" onclick="submitForm()">送出</button>
+    <span style="margin-left: 5px;">（送出後不得再修改）</span>
 {% endblock %}
 
 {% block scripts %}
@@ -41,8 +40,8 @@
                     }                                 
                     
                     if (input.name === 'firm_task_1') {
-                        // let inputValue = parseInt(input.value);
-                        if (isNaN(input.value) || input.value < min || input.value > max) {
+                        let inputValue = parseInt(input.value);
+                        if (isNaN(inputValue) || inputValue < min || inputValue > max) {
                             event.preventDefault();
                             alert('請填入 0 至 200 的整數');
                             return; // Stop further processing if needed
@@ -57,18 +56,7 @@
                 }
             });
 
-            // Change the text of the "Next" button to "下一頁"
-            let nextButton = document.querySelector('.otree-btn-next');
-            if (nextButton) {
-                nextButton.innerText = '送出';
-                let spanElement = document.createElement('span');
-                spanElement.style.marginLeft = '5px';
-                spanElement.innerText = '（送出後不得再修改）';
-
-                // Append the span element to the row containing the Next button
-                let nextButtonRow = document.getElementById('nextButtonRow');
-                nextButtonRow.appendChild(spanElement);
-            }
+           
         });
     </script>
 {% endblock %}

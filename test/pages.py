@@ -694,24 +694,24 @@ class Results(Page):
             your_payoff = "您於本回合的應徵聘僱決策獲得 "+  str(self.group.worker_normal_payoff)+"。"
             their_payoff = "雇主於本回合的應徵聘僱決策獲得 "+str(self.group.firm_normal_payoff)+"。"
             if self.group.firm_hire:
-                their_decision = "雇主決定錄取您。"
+                their_decision = "雇主決定<b>錄取</b>您。"
             else: 
-                their_decision = "雇主決定不錄取您。"
+                their_decision = "雇主決定<b>不錄取</b>您。"
             if self.group.worker_invest:
-                your_decision = "您決定投入受訓。"
+                your_decision = "您決定投入<b>受訓</b>。"
             else: 
-                your_decision = "您決定不投入受訓。"
+                your_decision = "您決定不投入<b>受訓</b>。"
         elif self.player.id_in_group == 2:
             your_payoff = "您於本回合的應徵聘僱決策獲得 "+  str(self.group.firm_normal_payoff)+"。"
             their_payoff = "求職者於本回合的應徵聘僱決策獲得 "+str(self.group.worker_normal_payoff)+"。"
             if self.group.firm_hire:
-                your_decision = "您決定錄取求職者。"
+                your_decision = "您決定<b>錄取</b>求職者。"
             else: 
-                your_decision = "您決定錄取求職者。"
+                your_decision = "您決定<b>錄取</b>求職者"
             if self.group.worker_invest:
-                their_decision = "您配對到"+str(self.group.worker_color)+"求職者，求職者決定投入受訓。"
+                their_decision = "您配對到"+str(self.group.worker_color)+"求職者，求職者決定投入<b>受訓</b>。"
             else: 
-                their_decision = "您配對到"+str(self.group.worker_color)+"求職者，求職者決定不投入受訓。"
+                their_decision = "您配對到"+str(self.group.worker_color)+"求職者，求職者決定不投入<b>受訓</b>。"
         return {
            # 'firm_belief_payoff': str(self.group.firm_belief_payoff),
       #      'firm_payoff': str(self.group.get_player_by_role('Firm').potential_payoff),
