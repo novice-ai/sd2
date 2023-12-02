@@ -177,6 +177,43 @@
                 <td></td>
                 <td align="left"><b>福袋</b></td>
             </tr>
+            {% block messages %}
+                {% for amount in right_side_amounts %}
+                    <div id="messages-{{ amount }}" style="display: none;">
+                        {% if amount == 0 %}
+                            <p>您目前選擇第{{amount}}行，表示您認雇主決定錄取的機率介於 0% 與 10% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% elif amount == 1 %}
+                            <p>您目前選擇第{{amount}}行，表示您認為雇主決定錄取的機率介於 10% 與 20% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% elif amount == 2 %}
+                            <p>您目前選擇第{{amount}}行，表示您認為雇主決定錄取的機率介於 20% 與 30% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% elif amount == 3 %}
+                            <p>您目前選擇第{{amount}}行，表示您認為雇主決定錄取介於 30% 與 40% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% elif amount == 4 %}
+                            <p>您目前選擇第{{amount}}行，表示您認為雇主決定錄取介於 40% 與 50% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% elif amount == 5 %}
+                            <p>您目前選擇第{{amount}}行，表示您認為雇主決定錄取介於 50% 與 60% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% elif amount == 6 %}
+                            <p>您目前選擇第{{amount}}行，表示您認為雇主決定錄取介於 60% 與 70% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% elif amount == 7 %}
+                            <p>您目前選擇第{{amount}}行，表示您認為雇主決定錄取介於 70% 與 80% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% elif amount == 8 %}
+                            <p>您目前選擇第{{amount}}行，表示您認為雇主決定錄取介於 80% 與 90% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% elif amount == 9 %}
+                            <p>您目前選擇第{{amount}}行，表示您認為雇主決定錄取介於 90% 與 100% 之間。</p>
+                            <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endblock %}
             {{ for amount in right_side_amounts }}
             <tr>   
                 <td align="right">    
@@ -269,6 +306,7 @@
 <script>
     let allRadios = document.querySelectorAll('input[type=radio]')
     let allAdditionalChoiceSpans = document.querySelectorAll('span[id^="additional-choice-"]');
+    let allMessages = document.querySelectorAll('div[id^="messages-"]');
 
     function submitForm() {
         let form = document.getElementById('form');
@@ -326,7 +364,9 @@
         for (let span of allAdditionalChoiceSpans) {
             span.style.display = 'none';
         }
-
+        for (let message of allMessages) {
+            message.style.display = 'none';
+        }
         // Show the dropdown for the checked amount or the current amount on left click
         let amount = clickedRadio.dataset.amount;
 
@@ -334,8 +374,10 @@
         if (clickedRadio.name !== 'worker_invest') {
             if (clickedRightRadio && amount > 0) {
                 document.getElementById('additional-choice-' + (amount - 1)).style.display = 'inline-block';
+                document.getElementById('messages-' + (amount - 1)).style.display = 'block';
             } else if (!clickedRightRadio && amount >= 0) {
                 document.getElementById('additional-choice-' + amount).style.display = 'inline-block';
+                document.getElementById('messages-' + amount).style.display = 'block';
             }
         }
     }
@@ -365,15 +407,17 @@
             radio.addEventListener('change', function () {
                 let amount = radio.getAttribute('data-amount');
                 let additionalChoiceSpan = document.getElementById('additional-choice-' + amount);
-
+                let message = document.getElementById('messages-' + amount);
                 // Exclude "firm_hire" from the change event
                 if (radio.name !== 'worker_invest') {
                     // Check if the clicked radio is 'right' and amount is greater than 0
                     // If true, display the dropdown for the preceding amount
                     if (radio.checked && amount > 0) {
                         document.getElementById('additional-choice-' + (amount - 1)).style.display = 'inline-block';
+                        document.getElementById('messages-' + (amount - 1)).style.display = 'block';
                     } else {
                         additionalChoiceSpan.style.display = 'none';
+                        message.style.display = 'none';
                     }
                 }
             });
