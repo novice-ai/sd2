@@ -186,7 +186,7 @@
                 <td></td>
                 <td align="left"><b>福袋</b></td>
             </tr>
-            {{% block messages %}}
+            {% block messages %}
                 {% for amount in right_side_amounts %}
                     <div id="messages-{{ amount }}" style="display: none;">
                         {% if amount == 0 %}
@@ -201,7 +201,7 @@
                         {% endif %}
                     </div>
                 {% endfor %}
-            {{% end block %}}
+            {% end block %}
             {{ for amount in right_side_amounts }}
             <tr>   
                 <td align="right">    
