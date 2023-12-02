@@ -51,7 +51,7 @@
                 }
                 if (incompleteFields.length > 0) {
                     event.preventDefault();
-                    alert('請完整回答再前往下一頁');
+                    alert('請完整回答再送出');
                     // You can customize the error handling further if needed
                 }
             });
@@ -59,7 +59,14 @@
             // Change the text of the "Next" button to "下一頁"
             let nextButton = document.querySelector('.otree-btn-next');
             if (nextButton) {
-                nextButton.innerText = '下一頁';
+                nextButton.innerText = '送出';
+                let spanElement = document.createElement('span');
+                spanElement.style.marginLeft = '5px';
+                spanElement.innerText = '（送出後不得再修改）';
+
+                // Append the span element to the row containing the Next button
+                let nextButtonRow = document.getElementById('nextButtonRow');
+                nextButtonRow.appendChild(spanElement);
             }
         });
     </script>

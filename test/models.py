@@ -199,7 +199,7 @@ class Subsession(BaseSubsession):
             color_list = []
             for g in self.get_groups():
                 count += 1
-                if count % 5 < 2:
+                if count % 3 == 0:
                     color_list.append(C.COLORS[0])  # Append 'PURPLE'
                 else:
                     color_list.append(C.COLORS[1])  # Append 'GREEN'
