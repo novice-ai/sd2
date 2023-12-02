@@ -187,10 +187,8 @@
                 <td align="left"><b>福袋</b></td>
             </tr>
             {{ for amount in right_side_amounts }}
-            {% if amount_selected == amount %}
                 <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於之間。</p>
                 <p>請點選該行跳出的選項，進行更精確的決策。</p>
-            {% endif %}
             <tr>   
                 <td align="right">    
                     第<b>{{amount}}</b>行:                      
