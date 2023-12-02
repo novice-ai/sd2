@@ -187,7 +187,7 @@
                 <td align="left"><b>福袋</b></td>
             </tr>
             {{ for amount in right_side_amounts }}
-                <span id="messages-{{ amount }}" style="display: none;">
+                <div id="messages-{{ amount }}" style="display: none;">
                     {% if amount == 0 %}
                     <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 與 10% 之間。</p>
                     <p>請點選該行跳出的選項，進行更精確的決策。</p>
@@ -219,7 +219,7 @@
                     <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 90% 與 100% 之間。</p>
                     <p>請點選該行跳出的選項，進行更精確的決策。</p>
                     {% endif %}
-                </span> 
+                </div> 
             <tr>   
                 <td align="right">    
                     第<b>{{amount}}</b>行:                      
