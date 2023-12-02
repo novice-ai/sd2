@@ -174,10 +174,39 @@
         {{ formfield_errors 'firm_investment_belief' }}
         <!-- Conditional Messages Section -->
         <div>
-            {% for amount in right_side_amounts %}
-                {% if amount == selected_amount %}
-                    <p>You selected the {{ amount }}{% if amount != 0 %}0{% endif %} option with {{ amount }}% probability.</p>
-                {% endif %}
+            {% for amount in right_side_amounts %}      
+                {% if amount == 0 %}                    
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% elif amount == 1 %}
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% elif amount == 2 %}
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% elif amount == 3 %}
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% elif amount == 4 %}
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% elif amount == 5 %}
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% elif amount == 6 %}
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% elif amount == 7 %}
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% elif amount == 8 %}
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% elif amount == 9 %}
+                    <p>您目前選擇第{{amount}}行，表示您認為求職者決定受訓的機率介於 0% 到 10% 之間。</p>
+                    <p>請點選該行跳出的選項，進行更精確的決策。</p>
+                {% endif %}        
+                    <p>您選擇了第 {{ amount }} 行，請</p>
             {% endfor %}
         </div>
 
@@ -275,6 +304,9 @@
             </tr>
             {{ endfor }}
         </table>
+        <div>                      
+            <p>如果希望更改選擇，請點選另外一行</p>
+        </div>
         {{ endblock }}  
     </div>
     <button type="button" class="btn btn-primary" onclick="submitForm()">下一頁</button>
