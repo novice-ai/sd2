@@ -62,6 +62,9 @@ LANGUAGE_CODE = 'zh-tw'
 USE_POINTS = True
 POINTS_CUSTOM_NAME = '法幣'
 SECRET_KEY = ''
+ADMIN_USERNAME = 'admin'
+# for security, best to set admin password in an environment variable
+ADMIN_PASSWORD = environ.get('OTREE_ADMIN_PASSWORD')
 if environ.get('OTREE_PRODUCTION') not in {None, '', '0'}:
     DEBUG = True
 else:
