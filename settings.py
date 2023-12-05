@@ -65,7 +65,7 @@ SECRET_KEY = ''
 if environ.get('OTREE_PRODUCTION') not in {None, '', '0'}:
     DEBUG = False
 else:
-    DEBUG = True
+    DEBUG = False
 DEFAULT_CHARSET = 'UTF-8'
 
 # Define other settings as needed
