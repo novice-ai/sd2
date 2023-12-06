@@ -484,13 +484,13 @@ class Firm(Page):
             stage_num = 1
             stage_round = self.round_number
             #WW:
-            extra_text_type = "您配對到" + str(self.group.worker_color) + "的求職者。"
+            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif second_stage_start < self.round_number <= third_stage_start:
             green_cost = C.SECOND_COST_OF_TRAINING
             purple_cost = C.SECOND_COST_OF_TRAINING
             stage_num = 2
             stage_round = self.round_number - second_stage_start
-            extra_text_type = "您配對到" + str(self.group.worker_color) + "的求職者。"
+            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif third_stage_start < self.round_number <= fourth_stage_start:
             green_cost = C.THIRD_COST_OF_TRAINING
             purple_cost = C.THIRD_COST_OF_TRAINING
@@ -709,9 +709,9 @@ class Results(Page):
             else: 
                 your_decision = "您決定<b>不錄取</b>"
             if self.group.worker_invest:
-                their_decision = "您配對到"+str(self.group.worker_color)+"求職者，求職者決定<b>受訓</b>。"
+                their_decision = "您配對到 "+str(self.group.worker_color)+" 求職者，求職者決定<b>受訓</b>。"
             else: 
-                their_decision = "您配對到"+str(self.group.worker_color)+"求職者，求職者決定<b>不受訓</b>。"
+                their_decision = "您配對到 "+str(self.group.worker_color)+" 求職者，求職者決定<b>不受訓</b>。"
         return {
            # 'firm_belief_payoff': str(self.group.firm_belief_payoff),
       #      'firm_payoff': str(self.group.get_player_by_role('Firm').potential_payoff),
