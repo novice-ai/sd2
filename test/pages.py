@@ -333,7 +333,7 @@ class Worker(Page):
                 table_not_invest_not_hire = "{0} - 10,{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
             else:
-                worker_send_signal= "您決定<b>不傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"               
+                worker_send_signal= "您決定<b>不傳送訊息</b>（訊息成本為 10） 。"               
                 table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -518,7 +518,7 @@ class Firm(Page):
                 table_not_invest_not_hire = "{0}-10,{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
             else:
-                firm_see_signal= "您配對到的求職者決定<b>不傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"
+                firm_see_signal= "您配對到的求職者決定<b>不傳送訊息</b>（訊息成本為 10） 。"
                 table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
