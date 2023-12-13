@@ -785,7 +785,8 @@ class Payoffs(Page):
         normal_into_currency = normal_payoff/7
         task_into_currency = task_payoff/7
         belief_into_currency = belief_payoff/7
-        total_payoff = normal_into_currency + self.session.config['participation_fee'] + task_into_currency + belief_into_currency
+        # total_payoff = normal_into_currency + self.session.config['participation_fee'] + task_into_currency + belief_into_currency
+        total_payoff = self.player.total_payoff
 
         return {
             'participation_fee': f'{participation_fee:.0f}',

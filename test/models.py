@@ -122,7 +122,7 @@ class Subsession(BaseSubsession):
 ##WW: The subsequent if statements check for certain configuration options in the self.session.config dictionary. If a configuration option is found, it's assigned to the respective class attribute. For example, self.use_firm_belief_elicitation and self.use_worker_belief_elicitation are set based on the presence of 'use_firm_belief_elicitation' and 'use_worker_belief_elicitation' in the session configuration. Similar checks are done for other parameters like the number of rounds in different stages (self.num_first_stage_rounds, self.num_second_stage_rounds, etc.) and stipend values for the third stage.
         if 'use_firm_belief_elicitation' in self.session.config:
             self.use_firm_belief_elicitation = self.session.config['use_firm_belief_elicitation']
-            
+
         if 'use_worker_belief_elicitation' in self.session.config:
             self.use_worker_belief_elicitation = self.session.config['use_worker_belief_elicitation']
 
@@ -314,12 +314,16 @@ class Player(BasePlayer):
     final_normal_payoff = models.CurrencyField(
          initial=0,
     )
+    total_payoff = models.CurrencyField(
+         initial=0,
+    )
     def set_payoffs(self):
         for player in self.group.get_players():
 #             final_belief_payoff = 0
             belief_payoff = 0
             final_normal_payoff = 0
-            task_payoff = 0                     
+            task_payoff = 0         
+            total_payoff = 0            
             if self.subsession.round_number == 1:        
                 if self.belief_round == 1:
                     if player.role() == 'Worker':
@@ -467,7 +471,9 @@ class Player(BasePlayer):
                         if self.risk_2 <= 4:                           
                             self.task_payoff = self.group.firm_task_2 * 2.5 + 200 - self.group.firm_task_2
                         else:
-                            self.task_payoff = 200 - self.group.firm_task_2                         
+                            self.task_payoff = 200 - self.group.firm_task_2      
+            if self.subsession.round_number == self.subsession.num_rounds:    
+                self.total_payoff = (self.task_payoff + self.final_normal_payoff + self.belief_payoff)/7 +self.session.config['participation_fee']       
                 #firm.payoff = firm.in_round(player.paying_round).potential_payoff
                 #worker.payoff = worker.in_round(player.paying_round).potential_payoff
                 
