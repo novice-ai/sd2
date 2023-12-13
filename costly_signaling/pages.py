@@ -353,15 +353,15 @@ class Worker(Page):
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
 
         
-        if third_stage_start < self.round_number:
-            # worker_choose_reveal = self.group.reveal_type
-            # if worker_choose_reveal:
-            #     worker_reveal_type= "您決定<b>接露</b>您的類別。"
-            # else:
-            #     worker_reveal_type= "您決定<b>不揭露</b>您的類別。"
-        else:
-            # worker_choose_reveal = ""
-            # worker_reveal_type = ""
+        # if third_stage_start < self.round_number:
+        #     # worker_choose_reveal = self.group.reveal_type
+        #     # if worker_choose_reveal:
+        #     #     worker_reveal_type= "您決定<b>接露</b>您的類別。"
+        #     # else:
+        #     #     worker_reveal_type= "您決定<b>不揭露</b>您的類別。"
+        # else:
+        #     # worker_choose_reveal = ""
+        #     # worker_reveal_type = ""
         
         return {
             'table_invest_hire': str(table_invest_hire),
