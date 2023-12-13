@@ -68,10 +68,12 @@ class Begin_Experiment(Page):
     
 class Reveal_Signal(Page):
     form_model = 'group'
-    if 'type_disclosure' in self.session.config and self.session.config['type_disclosure']:
-        form_fields = ['reveal_type', 'send_signal']
-    else:
-        form_fields = ['send_signal']
+    def form_fields(self):
+        # Use self.session.config to conditionally set form fields
+        if 'type_disclosure' in self.session.config and self.session.config['type_disclosure']:
+            return ['reveal_type', 'send_signal']
+        else:
+            return ['send_signal']
     def vars_for_template(self):
         green_invest_count = 0.
         purple_invest_count = 0.
