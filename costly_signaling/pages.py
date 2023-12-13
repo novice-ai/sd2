@@ -68,7 +68,8 @@ class Begin_Experiment(Page):
     
 class Reveal_Signal(Page):
     form_model = 'group'
-    form_fields = ['reveal_type', 'send_signal']
+    # form_fields = ['reveal_type', 'send_signal']
+    form_fields = ['send_signal']
 
     def vars_for_template(self):
         green_invest_count = 0.
@@ -288,7 +289,7 @@ class Worker(Page):
         extra_text_green = ""
         extra_text_purple = ""
         worker_send_signal = ""
-        worker_reveal_type = ""
+        # worker_reveal_type = ""
 
         stage_num = 0
         if 0 < self.round_number <= second_stage_start:
@@ -353,14 +354,14 @@ class Worker(Page):
 
         
         if third_stage_start < self.round_number:
-            worker_choose_reveal = self.group.reveal_type
-            if worker_choose_reveal:
-                worker_reveal_type= "您決定<b>接露</b>您的類別。"
-            else:
-                worker_reveal_type= "您決定<b>不揭露</b>您的類別。"
+            # worker_choose_reveal = self.group.reveal_type
+            # if worker_choose_reveal:
+            #     worker_reveal_type= "您決定<b>接露</b>您的類別。"
+            # else:
+            #     worker_reveal_type= "您決定<b>不揭露</b>您的類別。"
         else:
-            worker_choose_reveal = ""
-            worker_reveal_type = ""
+            # worker_choose_reveal = ""
+            # worker_reveal_type = ""
         
         return {
             'table_invest_hire': str(table_invest_hire),
@@ -371,8 +372,8 @@ class Worker(Page):
             'purple_invest_rate': self.group.purple_invest_rate_shown,
             'green_hiring_rate': self.group.green_hire_rate_shown,
             'purple_hiring_rate': self.group.purple_hire_rate_shown,
-            'worker_choose_reveal': worker_choose_reveal,
-            'worker_reveal_type': str(worker_reveal_type),
+            # 'worker_choose_reveal': worker_choose_reveal,
+            # 'worker_reveal_type': str(worker_reveal_type),
             'worker_choose_send': worker_choose_send,
             'worker_send_signal': str(worker_send_signal),
             'avg_hiring_rate': self.group.avg_hire_rate_shown,
@@ -539,15 +540,15 @@ class Firm(Page):
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
         
         if third_stage_start < self.round_number:            
-            worker_choose_reveal = self.group.reveal_type
-            if worker_choose_reveal:
-                firm_see_type= "您配對到的求職者決定<b>揭露</b>其類別為 "+str(self.group.worker_color)+" 。"
-            else:
-                firm_see_type= "您配對到的求職者決定<b>不揭露</b>其類別。"
+        #     worker_choose_reveal = self.group.reveal_type
+        #     if worker_choose_reveal:
+        #         firm_see_type= "您配對到的求職者決定<b>揭露</b>其類別為 "+str(self.group.worker_color)+" 。"
+        #     else:
+        #         firm_see_type= "您配對到的求職者決定<b>不揭露</b>其類別。"
 
-        else:
-            worker_choose_reveal = ""
-            firm_see_type = ""
+        # else:
+        #     worker_choose_reveal = ""
+        #     firm_see_type = ""
             
         return {
             'table_invest_hire': str(table_invest_hire),
@@ -563,8 +564,8 @@ class Firm(Page):
             'green_hiring_count': str(green_hiring_count),
             'purple_hiring_count': str(purple_hiring_count),
              ##WW:
-            'worker_choose_reveal': worker_choose_reveal,
-            'firm_see_type': firm_see_type,
+            # 'worker_choose_reveal': worker_choose_reveal,
+            # 'firm_see_type': firm_see_type,
             'worker_choose_send': worker_choose_send,
             'firm_see_signal': firm_see_signal,
             'avg_hiring_rate': self.group.avg_hire_rate_shown,

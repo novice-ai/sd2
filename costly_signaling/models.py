@@ -483,15 +483,15 @@ class Group(BaseGroup):
             [False, '否'],  # Maps False to '否'
         ],
     )
-    reveal_type = models.BooleanField(
-        initial = None,
-        doc="""Whether the worker wants to reveal their type""",
-        verbose_name='您願意向雇主揭露您的類別嗎?',
-        choices=[
-            [True, '是'],  # Maps True to '是'
-            [False, '否'],  # Maps False to '否'
-        ],
-    )
+    # reveal_type = models.BooleanField(
+    #     initial = None,
+    #     doc="""Whether the worker wants to reveal their type""",
+    #     verbose_name='您願意向雇主揭露您的類別嗎?',
+    #     choices=[
+    #         [True, '是'],  # Maps True to '是'
+    #         [False, '否'],  # Maps False to '否'
+    #     ],
+    # )
     worker_invest = models.BooleanField(
         initial = None,
         doc="""Whether the worker wants to invest""",
