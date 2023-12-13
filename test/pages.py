@@ -68,8 +68,10 @@ class Begin_Experiment(Page):
     
 class Reveal_Signal(Page):
     form_model = 'group'
-    form_fields = ['reveal_type', 'send_signal']
-
+    if 'type_disclosure' in self.session.config and self.session.config['type_disclosure']:
+        form_fields = ['reveal_type', 'send_signal']
+    else:
+        form_fields = ['send_signal']
     def vars_for_template(self):
         green_invest_count = 0.
         purple_invest_count = 0.
@@ -352,7 +354,7 @@ class Worker(Page):
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
 
         
-        if third_stage_start < self.round_number:
+        if third_stage_start < self.round_number and 'type_disclosure' in self.session.config and self.session.config['type_disclosure']:
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
                 worker_reveal_type= "您決定<b>接露</b>您的類別。"

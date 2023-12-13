@@ -55,6 +55,7 @@ SESSION_CONFIG_DEFAULTS = {
     'real_world_currency_per_point': 1/7,
     'app_sequence': ['pure_colorblind'],
     'participation_fee': 100,
+    'type_disclosure': True,
 }
 
 # Additional oTree configurations and settings go here
