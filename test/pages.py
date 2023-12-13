@@ -356,7 +356,7 @@ class Worker(Page):
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
 
         
-        if third_stage_start < self.round_number and if self.yes_type_disclosure:
+        if third_stage_start < self.round_number and self.yes_type_disclosure:
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
                 worker_reveal_type= "您決定<b>接露</b>您的類別。"
@@ -542,7 +542,7 @@ class Firm(Page):
             table_not_invest_not_hire = "{0},{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
         
-        if third_stage_start < self.round_number and if self.yes_type_disclosure:            
+        if third_stage_start < self.round_number and self.yes_type_disclosure:            
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
                 firm_see_type= "您配對到的求職者決定<b>揭露</b>其類別為 "+str(self.group.worker_color)+" 。"
