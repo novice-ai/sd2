@@ -357,9 +357,6 @@ class Worker(Page):
 
         
         if third_stage_start < self.round_number and self.session.config['type_disclosure']:
-            return ['reveal_type', 'send_signal']
-        else:
-            return ['send_signal']:
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
                 worker_reveal_type= "您決定<b>接露</b>您的類別。"
