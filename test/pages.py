@@ -73,7 +73,7 @@ class Reveal_Signal(Page):
         if self.session.config['type_disclosure']:
             return ['reveal_type', 'send_signal']
         else:
-            return ['send_signal']:
+            return ['send_signal']
     def vars_for_template(self):
         green_invest_count = 0.
         purple_invest_count = 0.
