@@ -539,7 +539,7 @@ class Firm(Page):
             table_not_invest_not_hire = "{0},{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
         
-        if third_stage_start < self.round_number:            
+        # if third_stage_start < self.round_number:            
         #     worker_choose_reveal = self.group.reveal_type
         #     if worker_choose_reveal:
         #         firm_see_type= "您配對到的求職者決定<b>揭露</b>其類別為 "+str(self.group.worker_color)+" 。"
