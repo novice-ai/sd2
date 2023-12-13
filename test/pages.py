@@ -68,7 +68,7 @@ class Begin_Experiment(Page):
     
 class Reveal_Signal(Page):
     form_model = 'group'
-    def form_fields(self):
+    def get_form_fields(self):
         # Use self.session.config to conditionally set form fields
         if self.session.config['type_disclosure']:
             return ['reveal_type', 'send_signal']
