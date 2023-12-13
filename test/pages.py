@@ -70,10 +70,10 @@ class Reveal_Signal(Page):
     form_model = 'group'
     def form_fields(self):
         # Use self.session.config to conditionally set form fields
-        if self.yes_type_disclosure:
+        if self.session.config['type_disclosure']:
             return ['reveal_type', 'send_signal']
         else:
-            return ['send_signal']
+            return ['send_signal']:
     def vars_for_template(self):
         green_invest_count = 0.
         purple_invest_count = 0.
@@ -356,7 +356,10 @@ class Worker(Page):
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
 
         
-        if third_stage_start < self.round_number and self.yes_type_disclosure:
+        if third_stage_start < self.round_number and self.session.config['type_disclosure']:
+            return ['reveal_type', 'send_signal']
+        else:
+            return ['send_signal']:
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
                 worker_reveal_type= "您決定<b>接露</b>您的類別。"
@@ -542,7 +545,7 @@ class Firm(Page):
             table_not_invest_not_hire = "{0},{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
         
-        if third_stage_start < self.round_number and self.yes_type_disclosure:            
+        if third_stage_start < self.round_number and self.session.config['type_disclosure']:            
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
                 firm_see_type= "您配對到的求職者決定<b>揭露</b>其類別為 "+str(self.group.worker_color)+" 。"

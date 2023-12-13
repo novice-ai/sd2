@@ -111,8 +111,6 @@ class Subsession(BaseSubsession):
     num_third_stage_rounds = models.IntegerField(initial=0)
     num_fourth_stage_rounds = models.IntegerField(initial=0)
     num_rounds = models.IntegerField(initial=0)
-    yes_type_disclosure = models.BooleanField(initial=True)
-
     third_stage_stipend_green = models.IntegerField(initial=0)
     third_stage_stipend_purple = models.IntegerField(initial=0)
     
@@ -124,10 +122,7 @@ class Subsession(BaseSubsession):
 ##WW: The subsequent if statements check for certain configuration options in the self.session.config dictionary. If a configuration option is found, it's assigned to the respective class attribute. For example, self.use_firm_belief_elicitation and self.use_worker_belief_elicitation are set based on the presence of 'use_firm_belief_elicitation' and 'use_worker_belief_elicitation' in the session configuration. Similar checks are done for other parameters like the number of rounds in different stages (self.num_first_stage_rounds, self.num_second_stage_rounds, etc.) and stipend values for the third stage.
         if 'use_firm_belief_elicitation' in self.session.config:
             self.use_firm_belief_elicitation = self.session.config['use_firm_belief_elicitation']
-
-        if 'type_disclosure' in self.session.config:
-            self.yes_type_disclosure = self.session.config['type_disclosure']
-
+            
         if 'use_worker_belief_elicitation' in self.session.config:
             self.use_worker_belief_elicitation = self.session.config['use_worker_belief_elicitation']
 
