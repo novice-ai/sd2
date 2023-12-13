@@ -57,12 +57,12 @@ training
 
 
 class C(BaseConstants):
-    NAME_IN_URL = 'type_disclosure'
+    NAME_IN_URL = 'test'
     # number of players in a group - SHOULD ALWAYS BE 2
     PLAYERS_PER_GROUP = 2
     # the number of rounds to play - should be a multiple of 4
     ##change to 40
-    NUM_ROUNDS = 4
+    NUM_ROUNDS = 40
     # the costs of training in the different treatments
     ##WW: third round should be color-blind round
     FIRST_COST_OF_TRAINING_GREEN = 200
@@ -81,8 +81,8 @@ class C(BaseConstants):
     FIRM_HIRE_NOT_INVEST = 400
     FIRM_NOT_HIRE_INVEST = 1200
     FIRM_NOT_HIRE_NOT_INVEST = 1200
-    BIG_PRIZE = 200
-    SMALL_PRIZE = 0
+ #   BIG_PRIZE = 200
+  #  SMALL_PRIZE = 0
     COLORS = ["PURPLE", "GREEN"]
 
 #WW: reassign worker-firm pairings
@@ -95,14 +95,13 @@ class C(BaseConstants):
     #for i, group in enumerate(groups):
      #   for player in group:
       #      player.group = i + 1  # Assign the group number
-    
+
+
 class Subsession(BaseSubsession):
     green_investment_count = models.IntegerField(initial=0)
     purple_investment_count = models.IntegerField(initial=0)
     green_hiring_count = models.IntegerField(initial=0)
     purple_hiring_count = models.IntegerField(initial=0)
-
-    paying_round = models.IntegerField(initial=-1)
     #WW added following line:
     is_final_round = models.BooleanField(initial=False)
     use_firm_belief_elicitation = models.BooleanField(initial=True)
@@ -115,19 +114,12 @@ class Subsession(BaseSubsession):
 
     third_stage_stipend_green = models.IntegerField(initial=0)
     third_stage_stipend_purple = models.IntegerField(initial=0)
-
+    
     def creating_session(self):
         self.group_randomly(fixed_id_in_group=True)
     # WW: If the current round number is 1, this conditional statement proceeds to create a map that associates round numbers
     # with a boolean value indicating whether it's a paid round or not. This mapping is stored in the variable self.paying_round,
     # and it's generated randomly between rounds 1 and C.NUM_ROUNDS.
-        if self.round_number == 1:
-            self.paying_round = random.randint(1, C.NUM_ROUNDS)
-          #  randomize_groups(self)
-# WW: Only shuffle groups at the beginning of each sequence
-#WW: else: If the current round is not the first round (i.e., round_number is not 1), it retrieves the paying_round value from the previous round, which is stored in the first element of the list returned by self.in_previous_rounds(). This is done to maintain continuity in paid rounds.
-        else:
-            self.paying_round = self.in_previous_rounds()[0].paying_round
 ##WW: The subsequent if statements check for certain configuration options in the self.session.config dictionary. If a configuration option is found, it's assigned to the respective class attribute. For example, self.use_firm_belief_elicitation and self.use_worker_belief_elicitation are set based on the presence of 'use_firm_belief_elicitation' and 'use_worker_belief_elicitation' in the session configuration. Similar checks are done for other parameters like the number of rounds in different stages (self.num_first_stage_rounds, self.num_second_stage_rounds, etc.) and stipend values for the third stage.
         if 'use_firm_belief_elicitation' in self.session.config:
             self.use_firm_belief_elicitation = self.session.config['use_firm_belief_elicitation']
@@ -194,14 +186,23 @@ class Subsession(BaseSubsession):
         # and store them in participant.vars so that they can be accessed by the group
 
         if self.round_number == 1:
+            for player in self.get_players():
+                player.paying_round = random.randint(1, self.num_rounds)
+                player.lottery_1 = random.choice(range(10, 101, 10))
+                player.lottery_2 = random.randint(0, 9)
+                player.lottery_3 = random.randint(1, 100)
+                player.choose_task = random.randint(1, 2)
+                player.risk_1 = random.randint(1, 2)
+                player.risk_2 = random.randint(1, 10)
+                player.belief_round = random.choice([round_num for round_num in range(1, self.num_rounds + 1) if round_num != player.paying_round])
             count = 0
             color_list = []
             for g in self.get_groups():
                 count += 1
-                if count % 3 == 0:
-                    color_list.append(C.COLORS[0])  # Append 'GREEN'
+                if count % 3 == 1:
+                    color_list.append(C.COLORS[0])  # Append 'PURPLE'
                 else:
-                    color_list.append(C.COLORS[1])  # Append 'PURPLE'
+                    color_list.append(C.COLORS[1])  # Append 'GREEN'
                 #color_list.append(C.COLORS[count % 2])
                 # print(str(color_list))
             random.shuffle(color_list)
@@ -217,6 +218,18 @@ class Subsession(BaseSubsession):
                         g.get_player_by_role('Worker').participant.vars['worker_color']))
                 #WW: added
         # retrieve the worker_color set for this group's worker in round 1
+        elif self.round_number > 1:            
+            for player in self.get_players():
+                # Use values from the previous round
+                last_round_player = player.in_round(self.round_number - 1)
+                player.paying_round = last_round_player.paying_round
+                player.lottery_1 = last_round_player.lottery_1
+                player.lottery_2 = last_round_player.lottery_2
+                player.lottery_3 = last_round_player.lottery_3
+                player.choose_task = last_round_player.choose_task
+                player.risk_1 = last_round_player.risk_1
+                player.risk_2 = last_round_player.risk_2
+                player.belief_round = last_round_player.belief_round
         for g in self.get_groups():
             g.worker_color = g.get_player_by_role('Worker').participant.vars['worker_color']
       
@@ -243,11 +256,233 @@ class Subsession(BaseSubsession):
                 elif g.worker_color == 'PURPLE':
                     g.stipend = self.third_stage_stipend_purple
             elif fourth_stage_start < self.round_number <= self.num_rounds:
-                g.cost_of_training = C.FOURTH_COST_OF_TRAINING
+                g.cost_of_training = C.FOURTH_COST_OF_TRAINING               
 
+class Player(BasePlayer):
+    def role(self):
+        if self.id_in_group == 1:
+            return 'Worker'
+        if self.id_in_group == 2:
+            return 'Firm'
+     #   potential_payoff = models.CurrencyField(initial=0)       
+  #  payoff = models.CurrencyField(
+  #      initial=0
+   # )
+   # belief_payoff = models.CurrencyField(
+    #    initial=0
+   # )
+    lottery_1 = models.IntegerField(initial=None)
+    lottery_2 = models.IntegerField(initial=None)
+    lottery_3 = models.IntegerField(initial=None)
+    choose_task = models.IntegerField(initial=None)
+    risk_1 = models.IntegerField(initial=None)
+    risk_2 = models.IntegerField(initial=None)
+    paying_round = models.IntegerField(initial=None)
+    belief_round = models.IntegerField(initial=None)
+#     firm_belief_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+#     firm_task_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+#     firm_final_belief_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+#     firm_final_normal_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+#     worker_belief_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+#     worker_task_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+#     worker_final_belief_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+#     worker_final_normal_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+    belief_payoff = models.CurrencyField(
+         initial=0,
+    )
+#     final_belief_payoff = models.CurrencyField(
+#          initial=0,
+#     )
+    task_payoff = models.CurrencyField(
+         initial=0,
+    )
+    final_normal_payoff = models.CurrencyField(
+         initial=0,
+    )
+    def set_payoffs(self):
+        for player in self.group.get_players():
+#             final_belief_payoff = 0
+            belief_payoff = 0
+            final_normal_payoff = 0
+            task_payoff = 0                     
+            if self.subsession.round_number == 1:        
+                if self.belief_round == 1:
+                    if player.role() == 'Worker':
+                        if self.group.worker_hiring_belief > self.lottery_1:
+                            if self.group.firm_hire:
+                                self.belief_payoff = 200
+                            else:
+                                self.belief_payoff = 0
+                        elif self.group.worker_hiring_belief <= self.lottery_1 and self.lottery_1 - self.group.worker_hiring_belief <= 9:
+                            if self.group.worker_hiring_belief > self.lottery_1 - self.lottery_2:
+                                if self.group.firm_hire:
+                                    self.belief_payoff = 200
+                                else:
+                                    self.belief_payoff = 0                   
+                            else:
+                                if self.lottery_3 <= self.lottery_1 - self.lottery_2:
+                                    self.belief_payoff = 200
+                                else:
+                                    self.belief_payoff = 0
+                        else:
+                            if self.lottery_3 <= self.lottery_1:
+                                self.belief_payoff = 200
+                            else:
+                                self.belief_payoff = 0
+                    else:
+                        if self.group.firm_investment_belief > self.lottery_1:
+                            if self.group.worker_invest:
+                                self.belief_payoff = 200
+                            else:
+                                self.belief_payoff = 0
+                        elif self.group.firm_investment_belief <= self.lottery_1 and self.lottery_1 - self.group.firm_investment_belief <= 9:
+                            if self.group.firm_investment_belief > self.lottery_1 - self.lottery_2:
+                                if self.group.worker_invest:
+                                    self.belief_payoff = 200
+                                else:
+                                    self.belief_payoff = 0                   
+                            else:
+                                if self.lottery_3 <= self.lottery_1 - self.lottery_2:
+                                    self.belief_payoff = 200
+                                else:
+                                    self.belief_payoff = 0 
+                        else:
+                            if self.lottery_3 <= self.lottery_1:
+                                self.belief_payoff = 200
+                            else:
+                                self.belief_payoff = 0
+                
+                if self.paying_round == 1:
+                    if player.role() == 'Worker':
+                        self.final_normal_payoff = self.group.worker_normal_payoff
+                    else:
+                        self.final_normal_payoff = self.group.firm_normal_payoff
+#                 elif self.paying_round > 1:                     
+#                     self.final_normal_payoff = 0
+            elif self.subsession.round_number > 1:
+                last_round_player = self.in_round(self.round_number - 1)
+#                 if self.subsession.round_number == self.belief_round:
+#                     if player.role() == 'Firm':                 
+#                         self.final_belief_payoff = self.group.firm_belief_payoff
+#                     else:
+#                         self.final_belief_payoff = self.group.worker_belief_payoff
+#                 elif self.subsession.round_number > self.belief_round:
+#                     self.final_belief_payoff = last_round_player.final_belief_payoff
+#                 else: 
+#                     self.final_belief_payoff = 0 
+                if self.subsession.round_number == self.paying_round:
+                    if player.role() == 'Firm':                 
+                        self.final_normal_payoff = self.group.firm_normal_payoff
+                    else:
+                        self.final_normal_payoff = self.group.worker_normal_payoff
+                elif self.subsession.round_number > self.paying_round:
+                    self.final_normal_payoff = last_round_player.final_normal_payoff
+#                 else: 
+#                     self.final_normal_payoff = 0
+                    
+                if self.subsession.round_number == self.belief_round:
+                    if player.role() == 'Worker':
+                        if self.group.worker_hiring_belief > self.lottery_1:
+                            if self.group.firm_hire:
+                                self.belief_payoff = 200
+                            else:
+                                self.belief_payoff = 0
+                        elif self.group.worker_hiring_belief <= self.lottery_1 and self.lottery_1 - self.group.worker_hiring_belief <= 9:
+                            if self.group.worker_hiring_belief > self.lottery_1 - self.lottery_2:
+                                if self.group.firm_hire:
+                                    self.belief_payoff = 200
+                                else:
+                                    self.belief_payoff = 0                   
+                            else:
+                                if self.lottery_3 <= self.lottery_1 - self.lottery_2:
+                                    self.belief_payoff = 200
+                                else:
+                                    self.belief_payoff = 0
+                        else:
+                            if self.lottery_3 <= self.lottery_1:
+                                self.belief_payoff = 200
+                            else:
+                                self.belief_payoff = 0
+                    else:
+                        if self.group.firm_investment_belief > self.lottery_1:
+                            if self.group.worker_invest:
+                                self.belief_payoff = 200
+                            else:
+                                self.belief_payoff = 0
+                        elif self.group.firm_investment_belief <= self.lottery_1 and self.lottery_1 - self.group.firm_investment_belief <= 9:
+                            if self.group.firm_investment_belief > self.lottery_1 - self.lottery_2:
+                                if self.group.worker_invest:
+                                    self.belief_payoff = 200
+                                else:
+                                    self.belief_payoff = 0                   
+                            else:
+                                if self.lottery_3 <= self.lottery_1 - self.lottery_2:
+                                    self.belief_payoff = 200
+                                else:
+                                    self.belief_payoff = 0 
+                        else:
+                            if self.lottery_3 <= self.lottery_1:
+                                self.belief_payoff = 200
+                            else:
+                                self.belief_payoff = 0
+                elif self.subsession.round_number > self.belief_round:
+                    self.belief_payoff = last_round_player.belief_payoff            
 
+            if self.subsession.round_number == self.subsession.num_rounds: 
+
+                if self.group.field_maybe_none('worker_task_1') is None or self.group.field_maybe_none('worker_task_2') is None: 
+                    self.task_payoff = 0
+                else:
+                    if player.role() == 'Worker' and self.choose_task == 1:
+                        if self.risk_1 == 1:                           
+                            self.task_payoff = self.group.worker_task_1 * 2.5 + 200 - self.group.worker_task_1
+                        else:
+                            self.task_payoff = 200 - self.group.worker_task_1
+                    elif player.role() == 'Worker' and self.choose_task == 2:
+                        if self.risk_2 <= 4: 
+                            self.task_payoff = self.group.worker_task_2 * 2.5 + 200 - self.group.worker_task_2
+                        else:                                                     
+                            self.task_payoff = 200 - self.group.worker_task_2
+                    elif player.role() == 'Firm' and self.choose_task == 1:            
+                        if self.risk_1 == 1:                           
+                            self.task_payoff = self.group.firm_task_1 * 2.5 + 200 - self.group.firm_task_1
+                        else:
+                            self.task_payoff = 200 - self.group.firm_task_1
+                    elif player.role() == 'Firm' and self.choose_task == 2:            
+                        if self.risk_2 <= 4:                           
+                            self.task_payoff = self.group.firm_task_2 * 2.5 + 200 - self.group.firm_task_2
+                        else:
+                            self.task_payoff = 200 - self.group.firm_task_2                         
+                #firm.payoff = firm.in_round(player.paying_round).potential_payoff
+                #worker.payoff = worker.in_round(player.paying_round).potential_payoff
+                
 class Group(BaseGroup):
     ##WW:
+    send_signal = models.BooleanField(
+    #    initial = None,
+        doc="""Whether the worker wants to send costly message""",
+        verbose_name='您打算傳送<b>「我願意投入受訓」</b>的訊息給雇主嗎? 傳送訊息的成本為10法幣。',
+        choices=[
+            [True, '是'],  # Maps True to '是'
+            [False, '否'],  # Maps False to '否'
+        ],
+    )
     reveal_type = models.BooleanField(
         initial = None,
         doc="""Whether the worker wants to reveal their type""",
@@ -261,10 +496,10 @@ class Group(BaseGroup):
         initial = None,
         doc="""Whether the worker wants to invest""",
         #WW: verbose_name='Do you wish to invest in training?',
-        verbose_name='您打算針對這項職缺進行投資嗎?',
+        verbose_name='您打算投入受訓嗎?',
         choices=[
-            [True, '是'],  # Maps True to '是'
-            [False, '否'],  # Maps False to '否'
+            [True, '是'],
+            [False, '否'],
         ],
     )
     firm_hire = models.BooleanField(
@@ -278,65 +513,49 @@ class Group(BaseGroup):
         ],
     )
     firm_investment_belief = models.IntegerField(
-        initial=-1,
-        choices=range(0, 101),
-        ##WW: verbose_name='In your view, what is the likelihood that the worker you are paired '
-                     ##'with chose to invest in training?',
-        verbose_name='據您估計，配對到的求職者有多高機率會投資?',
-        #widget=widgets.Slider(
-        widget = widgets.RadioSelectHorizontal(
-           # attrs={'step': '1',
-            #       'min': '-1',
-             #      'max': '100'}
-        )
+        initial = None,
     )
     worker_hiring_belief = models.IntegerField(
-        initial=-1,
-        choices=range(0, 101),
-        ##WW: verbose_name='In your view, what is the likelihood that the firm you are paired '
-                     ##'with chose to hire you?',
-        verbose_name='據您估計，配對到的雇主有多高機率會決定錄取您?',
-       # widget=widgets.Slider(
-        widget = widgets.RadioSelectHorizontal(
-         #   attrs={'step': '1',
-          #         'min': '-1',
-           #        'max': '100'}
-        )
-    )
-    task_1 = models.IntegerField(
-        initial=-1,
-        choices=range(0, 201),
-        verbose_name='請問您打算把多少法幣投入抽獎?',
-       # widget=widgets.Slider(
-        widget = widgets.RadioSelectHorizontal(
-         #   attrs={'step': '1',
-          #         'min': '-1',
-           #        'max': '100'}
-        )
-    )
-    task_2 = models.IntegerField(
-        initial=-1,
-        choices=range(0, 201),
-        verbose_name='請問您打算把多少法幣投入抽獎?',
-       # widget=widgets.Slider(
-        widget = widgets.RadioSelectHorizontal(
-         #   attrs={'step': '1',
-          #         'min': '-1',
-           #        'max': '100'}
-        )
-    )
-    firm_belief_payoff = models.CurrencyField(
+        initial=None,     
+    )  
+    worker_normal_payoff = models.CurrencyField(
         initial=0,
     )
     firm_normal_payoff = models.CurrencyField(
         initial=0,
     )
-    worker_belief_payoff = models.CurrencyField(
-        initial=0,
+#     worker_belief_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+#     firm_belief_payoff = models.CurrencyField(
+#         initial=0,
+#     )
+    firm_task_1 = models.IntegerField(
+        initial=None,
+        verbose_name = '電腦給您 200 法幣，您必須決定要將多少法幣投入募資專案 A，該專案的達標機率為 50%。給定您決定投入 x 法幣，達標的話您將獲得 2.5x（即投入專案的法幣之 2.5 倍），沒達標的話您將獲得 0 法幣 。您會保有所有未投入專案的法幣，因此您於本項目的報酬會是未投入專案的法幣，加上投入該專案的收穫（如前所述，收穫可能為 0 ）。請問您要將多少法幣投入專案 A（請填入 0 至 200 的整數）?',
+        min = 0,
+        max = 200,
     )
-    worker_normal_payoff = models.CurrencyField(
-        initial=0,
+    firm_task_2 = models.IntegerField(
+        verbose_name = '電腦給您 200 法幣，您必須決定要將多少法幣投入募資專案 B，該專案的達標機率為 40%。給定您決定投入 x 法幣，達標的話您將獲得 3x （即投入專案的法幣之 3 倍），沒達標的話您將獲得 0 法幣 。您會保有所有未投入專案的法幣，因此您於本項目的報酬會是未投入專案的法幣，加上投入該專案的收穫 （如前所述，收穫可能為 0 ）。請問您要將多少法幣投入專案 B（請填入 0 至 200 的整數）?',
+        initial= None,
+        min = 0,
+        max = 200,
+    )    
+    worker_task_1 = models.IntegerField(
+        initial=None,
+        verbose_name = '電腦給您 200 法幣，您必須決定要將多少法幣投入募資專案 A，該專案的達標機率為 50%。給定您決定投入 x 法幣，達標的話您將獲得 2.5x（即投入專案的法幣之 2.5 倍），沒達標的話您將獲得 0 法幣 。您會保有所有未投入專案的法幣，因此您於本項目的報酬會是未投入專案的法幣，加上投入該專案的收穫（如前所述，收穫可能為 0 ）。請問您要將多少法幣投入專案 A（請填入 0 至 200 的整數）?',
+        min = 0,
+        max = 200,
+    )
+    worker_task_2 = models.IntegerField(
+        verbose_name = '電腦給您 200 法幣，您必須決定要將多少法幣投入募資專案 B，該專案的達標機率為 40%。給定您決定投入 x 法幣，達標的話您將獲得 3x （即投入專案的法幣之 3 倍），沒達標的話您將獲得 0 法幣 。您會保有所有未投入專案的法幣，因此您於本項目的報酬會是未投入專案的法幣，加上投入該專案的收穫 （如前所述，收穫可能為 0 ）。請問您要將多少法幣投入專案 B（請填入 0 至 200 的整數）?',
+        initial= None,
+        min = 0,
+        max = 200,
     ) 
+
+
     worker_color = models.StringField()
     cost_of_training = models.IntegerField()
     stipend = models.IntegerField()
@@ -357,76 +576,245 @@ class Group(BaseGroup):
 
     def set_payoffs(self):
         firm = self.get_player_by_role('Firm')
-        worker = self.get_player_by_role('Worker')
-        if self.worker_invest and self.firm_hire:
-            worker.potential_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training)
-            firm.potential_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
-        elif self.worker_invest and not self.firm_hire:
-            worker.potential_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training)
-            firm.potential_payoff = (C.FIRM_NOT_HIRE_INVEST)
-        elif not self.worker_invest and self.firm_hire:
-            worker.potential_payoff = (C.WORKER_HIRE_NOT_INVEST)
-            firm.potential_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
-        elif not self.worker_invest and not self.firm_hire:
-            worker.potential_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST)
-            firm.potential_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)
+        worker = self.get_player_by_role('Worker')     
+        #if self.field_maybe_none('send_signal') is None:
+         #   if self.worker_invest and self.firm_hire:
+          #      worker.potential_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training)
+           #     firm.potential_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
+           # elif self.worker_invest and not self.firm_hire:
+            #    worker.potential_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training)
+             #   firm.potential_payoff = (C.FIRM_NOT_HIRE_INVEST)
+           # elif not self.worker_invest and self.firm_hire:
+            #    worker.potential_payoff = (C.WORKER_HIRE_NOT_INVEST)
+             #   firm.potential_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
+           # elif not self.worker_invest and not self.firm_hire:
+            #    worker.potential_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST)
+             #   firm.potential_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)
+        #elif self.field_maybe_none('send_signal'):
+         #   if self.worker_invest and self.firm_hire:
+          #      worker.potential_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training-C.SIGNALING_COST)
+           #     firm.potential_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
+           # elif self.worker_invest and not self.firm_hire:
+            #    worker.potential_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training-C.SIGNALING_COST)
+             #   firm.potential_payoff = (C.FIRM_NOT_HIRE_INVEST)
+            #elif not self.worker_invest and self.firm_hire:
+             #   worker.potential_payoff = (C.WORKER_HIRE_NOT_INVEST-C.SIGNALING_COST)
+              #  firm.potential_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
+            #elif not self.worker_invest and not self.firm_hire:
+             #   worker.potential_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST-C.SIGNALING_COST)
+              #  firm.potential_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)
+       # else: 
+        #    if self.worker_invest and self.firm_hire:
+         #       worker.potential_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training)
+          #      firm.potential_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
+           # elif self.worker_invest and not self.firm_hire:
+            #    worker.potential_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training)
+             #   firm.potential_payoff = (C.FIRM_NOT_HIRE_INVEST)
+           # elif not self.worker_invest and self.firm_hire:
+            #    worker.potential_payoff = (C.WORKER_HIRE_NOT_INVEST)
+             #   firm.potential_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
+            #elif not self.worker_invest and not self.firm_hire:
+             #   worker.potential_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST)
+              #  firm.potential_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)
 
-        self.firm_normal_payoff = firm.potential_payoff
-        self.worker_normal_payoff = worker.potential_payoff
-        print("firm_payoff=" + str(firm.potential_payoff) + ", worker_payoff=" + str(worker.potential_payoff))
+        #self.firm_normal_payoff = firm.potential_payoff
+        #self.worker_normal_payoff = worker.potential_payoff
+        #print("firm_payoff=" + str(firm.potential_payoff) + ", worker_payoff=" + str(worker.potential_payoff))
+        
+        if self.field_maybe_none('send_signal') is None:                       
+            if self.worker_invest and self.firm_hire:
+                worker_normal_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training)
+                firm_normal_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
+            elif self.worker_invest and not self.firm_hire:
+                worker_normal_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training)
+                firm_normal_payoff = (C.FIRM_NOT_HIRE_INVEST)
+            elif not self.worker_invest and self.firm_hire:
+                worker_normal_payoff = (C.WORKER_HIRE_NOT_INVEST)
+                firm_normal_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
+            elif not self.worker_invest and not self.firm_hire:
+                worker_normal_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST)
+                firm_normal_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)
+        elif self.field_maybe_none('send_signal'):
+            if self.worker_invest and self.firm_hire:
+                worker_normal_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training-C.SIGNALING_COST)
+                firm_normal_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
+            elif self.worker_invest and not self.firm_hire:
+                worker_normal_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training-C.SIGNALING_COST)
+                firm_normal_payoff = (C.FIRM_NOT_HIRE_INVEST)
+            elif not self.worker_invest and self.firm_hire:
+                worker_normal_payoff = (C.WORKER_HIRE_NOT_INVEST-C.SIGNALING_COST)
+                firm_normal_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
+            elif not self.worker_invest and not self.firm_hire:
+                worker_normal_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST-C.SIGNALING_COST)
+                firm_normal_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)
+        else: 
+            if self.worker_invest and self.firm_hire:
+                worker_normal_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training)
+                firm_normal_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
+            elif self.worker_invest and not self.firm_hire:
+                worker_normal_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training)
+                firm_normal_payoff = (C.FIRM_NOT_HIRE_INVEST)
+            elif not self.worker_invest and self.firm_hire:
+                worker_normal_payoff = (C.WORKER_HIRE_NOT_INVEST)
+                firm_normal_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
+            elif not self.worker_invest and not self.firm_hire:
+                worker_normal_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST)
+                firm_normal_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)        
+        self.firm_normal_payoff = firm_normal_payoff
+        self.worker_normal_payoff = worker_normal_payoff
+        
+        
+#         for player in self.get_players():
+#             paying_round = player.paying_round
+#             lottery_1 = player.lottery_1
+#             lottery_2 = player.lottery_2
+#             lottery_3 = player.lottery_3
+#             choose_task = player.choose_task
+#             risk_1 = player.risk_1
+#             risk_2 = player.risk_2
+#             belief_round = player.belief_round
+#             worker_belief_payoff = 0
+#             firm_belief_payoff = 0
+# #             if self.use_firm_belief and player.role() == 'Firm':
+#             if player.role() == 'Firm':
+#                 if self.firm_investment_belief > lottery_1:
+#                     if self.worker_invest:
+#                         firm_belief_payoff = 200
+#                     else:
+#                         firm_belief_payoff = 0         
+#                 elif self.firm_investment_belief <= lottery_1 and lottery_1 - self.firm_investment_belief <= 9:
+#                     if self.firm_investment_belief > lottery_1 - lottery_2:
+#                         if self.worker_invest:
+#                             firm_belief_payoff = 200
+#                         else:
+#                             firm_belief_payoff = 0                   
+#                     else:
+#                         if lottery_3 <= lottery_1 - lottery_2:
+#                             firm_belief_payoff = 200
+#                         else:
+#                             firm_belief_payoff = 0                                          
+#                 else:
+#                     if lottery_3 <= lottery_1:
+#                         firm_belief_payoff = 200
+#                     else:
+#                         firm_belief_payoff = 0
+#             self.firm_belief_payoff = firm_belief_payoff
+# #             if self.use_worker_belief and player.role() == 'Worker':
+#             elif player.role() == 'Worker':
+#                 if self.worker_hiring_belief > lottery_1:
+#                     if self.firm_hire:
+#                         worker_belief_payoff = 200
+#                     else:
+#                         worker_belief_payoff = 0           
+#                 elif self.worker_hiring_belief <= lottery_1 and lottery_1 - self.worker_hiring_belief <= 9:
+#                     if self.worker_hiring_belief > lottery_1 - lottery_2:
+#                         if self.firm_hire:
+#                             worker_belief_payoff = 200
+#                         else:
+#                             worker_belief_payoff = 0                   
+#                     else:
+#                         if lottery_3 <= lottery_1 - lottery_2:
+#                             worker_belief_payoff = 200
+#                         else:
+#                             worker_belief_payoff = 0                                          
+#                 else:
+#                     if lottery_3 <= lottery_1:
+#                         worker_belief_payoff = 200
+#                     else:
+#                         worker_belief_payoff = 0            
+#             self.worker_belief_payoff = worker_belief_payoff
+#             player.firm_belief_payoff = firm_belief_payoff
+#             player.worker_belief_payoff = worker_belief_payoff
+        
+      #      if self.worker_invest:
+              #  probability = 1 - math.pow(1 - self.firm_investment_belief / 100, 2)
+               # print(
+               #     "worker invested, firm_investment_belief=" + str(
+                #        self.firm_investment_belief) + ", probability=" + str(
+                 #       probability))
+         #   else:
+          #      probability = 1 - math.pow(self.firm_investment_belief / 100, 2)
+           #     print("worker did not invest, firm_investment_belief=" + str(
+            #        self.firm_investment_belief) + ", probability=" + str(probability))
+            #if random.random() < probability:
+             #   print("firm wins big belief elicitation prize: " + str(C.BIG_PRIZE))
+              #  self.firm_belief_payoff = C.BIG_PRIZE
+            #    firm.potential_payoff += C.BIG_PRIZE
+            #else:
+             #   print("firm wins small belief elicitation prize: " + str(C.SMALL_PRIZE))
+              #  self.firm_belief_payoff = C.SMALL_PRIZE
+             #   firm.potential_payoff += C.SMALL_PRIZE
 
-        if self.use_firm_belief:
-            if self.worker_invest:
-                probability = 1 - math.pow(1 - self.firm_investment_belief / 100, 2)
-                print(
-                    "worker invested, firm_investment_belief=" + str(
-                        self.firm_investment_belief) + ", probability=" + str(
-                        probability))
-            else:
-                probability = 1 - math.pow(self.firm_investment_belief / 100, 2)
-                print("worker did not invest, firm_investment_belief=" + str(
-                    self.firm_investment_belief) + ", probability=" + str(probability))
-            if random.random() < probability:
-                print("firm wins big belief elicitation prize: " + str(C.BIG_PRIZE))
-                self.firm_belief_payoff = C.BIG_PRIZE
-                firm.potential_payoff += C.BIG_PRIZE
-            else:
-                print("firm wins small belief elicitation prize: " + str(C.SMALL_PRIZE))
-                self.firm_belief_payoff = C.SMALL_PRIZE
-                firm.potential_payoff += C.SMALL_PRIZE
+          
+           
+            #if self.worker_invest:
+                #probability = 1 - math.pow(1 - self.worker_hiring_belief / 100, 2)
+               # print(
+              #      "worker invested, worker_hiring_belief=" + str(
+             #           self.worker_hiring_belief) + ", probability=" + str(probability))
+            #else:
+              #  probability = 1 - math.pow(self.worker_hiring_belief / 100, 2)
+             #   print("worker did not invest, worker_hiring_belief=" + str(
+            #        self.worker_hiring_belief) + ", probability=" + str(probability))
+          #  if random.random() < probability:
+         #       print("worker wins big belief elicitation prize: " + str(C.BIG_PRIZE))
+              #  self.worker_belief_payoff = C.BIG_PRIZE
+               # worker.potential_payoff += C.BIG_PRIZE
+           # else:
+          #      print("worker wins small belief elicitation prize: " + str(C.SMALL_PRIZE))
+                #self.worker_belief_payoff = C.SMALL_PRIZE
+                #worker.potential_payoff += C.SMALL_PRIZE
 
-        if self.use_worker_belief:
-            if self.worker_invest:
-                probability = 1 - math.pow(1 - self.worker_hiring_belief / 100, 2)
-                print(
-                    "worker invested, worker_hiring_belief=" + str(
-                        self.worker_hiring_belief) + ", probability=" + str(probability))
-            else:
-                probability = 1 - math.pow(self.worker_hiring_belief / 100, 2)
-                print("worker did not invest, worker_hiring_belief=" + str(
-                    self.worker_hiring_belief) + ", probability=" + str(probability))
-            if random.random() < probability:
-                print("worker wins big belief elicitation prize: " + str(C.BIG_PRIZE))
-                self.worker_belief_payoff = C.BIG_PRIZE
-                worker.potential_payoff += C.BIG_PRIZE
-            else:
-                print("worker wins small belief elicitation prize: " + str(C.SMALL_PRIZE))
-                self.worker_belief_payoff = C.SMALL_PRIZE
-                worker.potential_payoff += C.SMALL_PRIZE
+        #print("setting payoffs: subsession.paying_round=" + str(self.subsession.paying_round))
+#         firm_task_payoff = 0 
+#         worker_task_payoff = 0
+#         if self.subsession.round_number == self.subsession.num_rounds:            
+#            # if self.field_maybe_none('worker_task_1') is None or self.field_maybe_none('firm_task_2') is None or self.field_maybe_none('firm_task_1') is None or self.field_maybe_none('worker_task_2') is None:
+                
+#             if player.role == 'Worker':
+#                 if choose_task == 1:
+#                     if risk_1 == 1:                           
+#                         worker_task_payoff = self.worker_task_1 * 2.5 + 200 - self.worker_task_1
+#                     else:
+#                         worker_task_payoff = 200 - self.worker_task_1
+#                 else:
+#                     if player.worker_risk_2 <= 4: 
+#                         worker_task_payoff = self.worker_task_2 * 2.5 + 200 - self.worker_task_2
+#                     else:                                                     
+#                         worker_task_payoff = 200 - self.worker_task_2
+#             elif player.role == 'Firm':
+#                 if choose_task == 1:
+#                     if risk_1 == 1:                           
+#                         firm_task_payoff = self.firm_task_1 * 2.5 + 200 - self.firm_task_1
+#                     else:
+#                         firm_task_payoff = 200 - self.firm_task_1
+#                 else:
+#                     if risk_2 <= 4: 
+#                         firm_task_payoff = self.firm_task_2 * 2.5 + 200 - self.firm_task_2
+#                     else:                                                     
+#                         firm_task_payoff = 200 - self.firm_task_2                            
+#             #firm.payoff = firm.in_round(player.paying_round).potential_payoff
+#             #worker.payoff = worker.in_round(player.paying_round).potential_payoff
+                 
+#             self.firm_task_payoff = firm_task_payoff
+#             self.worker_task_payoff = worker_task_payoff
+#         firm_final_belief_payoff = 0
+#         firm_final_normal_payoff = 0
+#         worker_final_belief_payoff = 0
+#         worker_final_normal_payoff = 0
+#         if player.role == 'Firm' and self.subsession.round_number == belief_round:
+#             firm_final_belief_payoff = firm_belief_payoff
+#         if player.role == 'Worker' and self.subsession.round_number == belief_round:         
+#             worker_final_belief_payoff = worker_belief_payoff
+            
+#         if self.subsession.round_number == paying_round and player.role == 'Firm':
+#             firm_final_normal_payoff = firm_normal_payoff
+#         if self.subsession.round_number == paying_round and player.role == 'Worker':        
+#             worker_final_normal_payoff = worker_normal_payoff
+                
+#         self.firm_final_belief_payoff = firm_final_belief_payoff       
+#         self.worker_final_belief_payoff = worker_final_belief_payoff
+#         self.firm_final_normal_payoff = firm_final_normal_payoff
+#         self.worker_final_normal_payoff = worker_final_normal_payoff
+            
 
-        print("setting payoffs: subsession.paying_round=" + str(self.subsession.paying_round))
-        if self.subsession.round_number == self.subsession.num_rounds:
-            firm.payoff = firm.in_round(self.subsession.paying_round).potential_payoff
-            worker.payoff = worker.in_round(self.subsession.paying_round).potential_payoff
-
-
-class Player(BasePlayer):
-    def role(self):
-        if self.id_in_group == 1:
-            return 'Worker'
-        if self.id_in_group == 2:
-            return 'Firm'
-
-    potential_payoff = models.CurrencyField(
-        initial=0
-    )
