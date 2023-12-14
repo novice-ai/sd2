@@ -254,6 +254,9 @@ class Player(BasePlayer):
     total_payoff = models.CurrencyField(
          initial=0,
     )
+    belief_payoff = models.CurrencyField(
+         initial=0,
+    )
     def set_payoffs(self):
         for player in self.group.get_players():
             belief_payoff = 0
