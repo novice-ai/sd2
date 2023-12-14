@@ -381,7 +381,7 @@ class Player(BasePlayer):
                 #             self.task_payoff = self.group.firm_task_2 * 2.5 + 200 - self.group.firm_task_2
                 #         else:
                 #             self.task_payoff = 200 - self.group.firm_task_2   
-                if self.group.field_maybe_none('task_1') is None or self.group.field_maybe_none('task_2') is None: 
+                if self.field_maybe_none('task_1') is None or self.field_maybe_none('task_2') is None: 
                     self.task_payoff = 0
                 else:
                     if self.choose_task == 1:
