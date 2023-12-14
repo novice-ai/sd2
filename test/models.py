@@ -77,14 +77,14 @@ class Subsession(BaseSubsession):
         if 'type_disclosure' in self.session.config and 'costly_signaling'in self.session.config:
             if self.session.config['type_disclosure']:
                 if self.session.config['costly_signaling']:
-                    treatment = 11
+                    self.treatment = 11
                 else:
-                    treatment = 10
+                    self.treatment = 10
             else:
                 if self.session.config['costly_signaling']:
-                    treatment = 1
+                    self.treatment = 1
                 else:
-                    treatment = 0
+                    self.treatment = 0
 
         if 'num_first_stage_rounds' in self.session.config:
             self.num_first_stage_rounds = self.session.config['num_first_stage_rounds']

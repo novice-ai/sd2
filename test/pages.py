@@ -201,7 +201,7 @@ class Reveal_Signal(Page):
         }
     def is_displayed(self):
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        return self.player.id_in_group == 1 and self.round_number > third_stage_start and self.subsession.treatment != 0
+        return self.player.id_in_group == 1 and self.round_number > third_stage_start and self.subsession.treatment != 0 and self.subsession.treatment != -1
 
 class WaitForWorkers(WaitPage):
     wait_for_all_groups = False
