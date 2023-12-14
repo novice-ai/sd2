@@ -357,30 +357,6 @@ class Player(BasePlayer):
                     self.belief_payoff = last_round_player.belief_payoff            
 
             if self.subsession.round_number == self.subsession.num_rounds: 
-
-                # if self.group.field_maybe_none('worker_task_1') is None or self.group.field_maybe_none('worker_task_2') is None: 
-                #     self.task_payoff = 0
-                # else:
-                #     if player.role() == 'Worker' and self.choose_task == 1:
-                #         if self.risk_1 == 1:                           
-                #             self.task_payoff = self.group.worker_task_1 * 2.5 + 200 - self.group.worker_task_1
-                #         else:
-                #             self.task_payoff = 200 - self.group.worker_task_1
-                #     elif player.role() == 'Worker' and self.choose_task == 2:
-                #         if self.risk_2 <= 4: 
-                #             self.task_payoff = self.group.worker_task_2 * 2.5 + 200 - self.group.worker_task_2
-                #         else:                                                     
-                #             self.task_payoff = 200 - self.group.worker_task_2
-                #     elif player.role() == 'Firm' and self.choose_task == 1:            
-                #         if self.risk_1 == 1:                           
-                #             self.task_payoff = self.group.firm_task_1 * 2.5 + 200 - self.group.firm_task_1
-                #         else:
-                #             self.task_payoff = 200 - self.group.firm_task_1
-                #     elif player.role() == 'Firm' and self.choose_task == 2:            
-                #         if self.risk_2 <= 4:                           
-                #             self.task_payoff = self.group.firm_task_2 * 2.5 + 200 - self.group.firm_task_2
-                #         else:
-                #             self.task_payoff = 200 - self.group.firm_task_2   
                 if self.field_maybe_none('task_1') is None or self.field_maybe_none('task_2') is None: 
                     self.task_payoff = 0
                 else:
@@ -447,30 +423,6 @@ class Group(BaseGroup):
     firm_normal_payoff = models.CurrencyField(
         initial=0,
     )
-    # firm_task_1 = models.IntegerField(
-    #     initial=None,
-    #     verbose_name = '電腦給您 200 法幣，您必須決定要將多少法幣投入募資專案 A，該專案的達標機率為 50%。給定您決定投入 x 法幣，達標的話您將獲得 2.5x（即投入專案的法幣之 2.5 倍），沒達標的話您將獲得 0 法幣 。您會保有所有未投入專案的法幣，因此您於本項目的報酬會是未投入專案的法幣，加上投入該專案的收穫（如前所述，收穫可能為 0 ）。請問您要將多少法幣投入專案 A（請填入 0 至 200 的整數）?',
-    #     min = 0,
-    #     max = 200,
-    # )
-    # firm_task_2 = models.IntegerField(
-    #     verbose_name = '電腦給您 200 法幣，您必須決定要將多少法幣投入募資專案 B，該專案的達標機率為 40%。給定您決定投入 x 法幣，達標的話您將獲得 3x （即投入專案的法幣之 3 倍），沒達標的話您將獲得 0 法幣 。您會保有所有未投入專案的法幣，因此您於本項目的報酬會是未投入專案的法幣，加上投入該專案的收穫 （如前所述，收穫可能為 0 ）。請問您要將多少法幣投入專案 B（請填入 0 至 200 的整數）?',
-    #     initial= None,
-    #     min = 0,
-    #     max = 200,
-    # )    
-    # worker_task_1 = models.IntegerField(
-    #     initial=None,
-    #     verbose_name = '電腦給您 200 法幣，您必須決定要將多少法幣投入募資專案 A，該專案的達標機率為 50%。給定您決定投入 x 法幣，達標的話您將獲得 2.5x（即投入專案的法幣之 2.5 倍），沒達標的話您將獲得 0 法幣 。您會保有所有未投入專案的法幣，因此您於本項目的報酬會是未投入專案的法幣，加上投入該專案的收穫（如前所述，收穫可能為 0 ）。請問您要將多少法幣投入專案 A（請填入 0 至 200 的整數）?',
-    #     min = 0,
-    #     max = 200,
-    # )
-    # worker_task_2 = models.IntegerField(
-    #     verbose_name = '電腦給您 200 法幣，您必須決定要將多少法幣投入募資專案 B，該專案的達標機率為 40%。給定您決定投入 x 法幣，達標的話您將獲得 3x （即投入專案的法幣之 3 倍），沒達標的話您將獲得 0 法幣 。您會保有所有未投入專案的法幣，因此您於本項目的報酬會是未投入專案的法幣，加上投入該專案的收穫 （如前所述，收穫可能為 0 ）。請問您要將多少法幣投入專案 B（請填入 0 至 200 的整數）?',
-    #     initial= None,
-    #     min = 0,
-    #     max = 200,
-    # ) 
 
 
     worker_color = models.StringField()
