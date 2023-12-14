@@ -42,7 +42,7 @@ class C(BaseConstants):
     
 class Computer_Number(Page):
     form_model = 'player'  
-    form_fields = [computer_num]
+    form_fields = ['computer_num']
     def is_displayed(self):
         second_stage_start = self.subsession.num_first_stage_rounds
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
@@ -718,7 +718,7 @@ class Task_Intro(Page):
         task_instructions_text_2 = "實驗結束後電腦會隨機選取其中一個項目實現報酬，並將您於該項目獲得的法幣換算成新台幣加到最終報酬。"
         return {
             'task_instructions_text_1': task_instructions_text_1,
-            'task_instructions_text_2': task_instructions_text_3
+            'task_instructions_text_2': task_instructions_text_2
         }
 
 class Task_1(Page):
