@@ -64,10 +64,6 @@ class Subsession(BaseSubsession):
     
     def creating_session(self):
         self.group_randomly(fixed_id_in_group=True)
-    # If the current round number is 1, this conditional statement proceeds to create a map that associates round numbers
-    # with a boolean value indicating whether it's a paid round or not. This mapping is stored in the variable self.paying_round,
-    # and it's generated randomly between rounds 1 and C.NUM_ROUNDS.
-    # The subsequent if statements check for certain configuration options in the self.session.config dictionary. If a configuration option is found, it's assigned to the respective class attribute. For example, self.use_firm_belief_elicitation and self.use_worker_belief_elicitation are set based on the presence of 'use_firm_belief_elicitation' and 'use_worker_belief_elicitation' in the session configuration. Similar checks are done for other parameters like the number of rounds in different stages (self.num_first_stage_rounds, self.num_second_stage_rounds, etc.) for the third stage.
         if 'use_firm_belief_elicitation' in self.session.config:
             self.use_firm_belief_elicitation = self.session.config['use_firm_belief_elicitation']
 
