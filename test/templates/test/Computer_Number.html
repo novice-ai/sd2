@@ -2,12 +2,21 @@
 {% load staticfiles otree %}
 
 {% block head_title %}
-    抽獎項目說明
+
 {% endblock %}
 
 {% block content %}
-    <p>{{ task_instructions_text_1 }}</p>
-    <p>{{ task_instructions_text_2 }}</p>
+    
+    <div class="row">
+        <div class="col-1-2">
+            {% for field in form %}
+                <div class="row">
+                    {% formfield field %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+ 
 
     {% next_button %}
     <script>

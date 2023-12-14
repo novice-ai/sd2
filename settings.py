@@ -56,6 +56,7 @@ SESSION_CONFIG_DEFAULTS = {
     'app_sequence': ['pure_colorblind'],
     'participation_fee': 100,
     'type_disclosure': True,
+    'costly_signaling': True
 }
 
 # Additional oTree configurations and settings go here

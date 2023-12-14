@@ -2,13 +2,9 @@
 from __future__ import division
 
 from otree.api import *
-#from otree.common import Currency as c, currency_range, safe_json
 import random
 import math
 from ._builtin import Page, WaitPage
-#from .models import Constants
-#from . import models
-#from otree.channels.routing import channel_routing;
 from otree.api import (
     models,
     widgets,
@@ -22,18 +18,15 @@ from otree.api import (
 
 class C(BaseConstants):
     NAME_IN_URL = 'test'
-    # number of players in a group - SHOULD ALWAYS BE 2
+    # number of players in a group - should be a multiple of 2 (6)
     PLAYERS_PER_GROUP = 2
     # the number of rounds to play - should be a multiple of 4
     NUM_ROUNDS = 40
-    # the costs of training in the different treatments
     FIRST_COST_OF_TRAINING_GREEN = 200
     FIRST_COST_OF_TRAINING_PURPLE = 600
     SECOND_COST_OF_TRAINING = 200
     THIRD_COST_OF_TRAINING = 200
     FOURTH_COST_OF_TRAINING = 200
-    # payoffs for different treatments
-    ##WW:
     SIGNALING_COST = 10
     WORKER_HIRE_INVEST = 1800
     WORKER_HIRE_NOT_INVEST = 1400
@@ -47,9 +40,18 @@ class C(BaseConstants):
     SMALL_PRIZE = 0
     COLORS = ["PURPLE", "GREEN"]
     
+class Computer_Number(Page):
+    form_model = 'player'  
+    form_fields = [computer_num]
+    def is_displayed(self):
+        second_stage_start = self.subsession.num_first_stage_rounds
+        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
+        fourth_stage_start = (
+            self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
+        return self.round_number == 1
+
 class Begin_Experiment(Page):
-    ##WW:added form_model and form_fields
-    form_model = ''  # This will hide the "Next" button on the final round.
+    form_model = '' 
     form_fields = []
     def is_displayed(self):
         second_stage_start = self.subsession.num_first_stage_rounds
@@ -70,10 +72,15 @@ class Reveal_Signal(Page):
     form_model = 'group'
     def get_form_fields(self):
         # Use self.session.config to conditionally set form fields
-        if self.session.config['type_disclosure']:
+        if self.subsession.treatment == 11:
             return ['reveal_type', 'send_signal']
-        else:
+        elif self.subsession.treatment == 1:
             return ['send_signal']
+        elif self.subsession.treatment == 10:
+            return ['reveal_type']
+        else:
+            return []
+
     def vars_for_template(self):
         green_invest_count = 0.
         purple_invest_count = 0.
@@ -81,27 +88,20 @@ class Reveal_Signal(Page):
         purple_hiring_count = 0.
         green_count = 0
         purple_count = 0
-        for s in self.subsession.in_previous_rounds():
-            # print("subsession " + str(s))
-            for g in s.get_groups():
-                # print("group "+str(g)+", g.worker_color="+str(g.worker_color)+", g.worker_invest="+str(g.worker_invest)+", g.firm_hire="+str(g.firm_hire))
-
+        for s in self.subsession.in_previous_rounds():        
+            for g in s.get_groups():            
                 if g.worker_color == 'GREEN':
                     green_count += 1
                     if g.worker_invest:
-                        green_invest_count += 1
-                        # print("green_invest_count="+str(green_invest_count))
+                        green_invest_count += 1                    
                     if g.firm_hire:
-                        green_hiring_count += 1
-                        # print("green_hiring_count=" + str(green_hiring_count))
+                        green_hiring_count += 1                      
                 elif g.worker_color == 'PURPLE':
                     purple_count += 1
                     if g.worker_invest:
-                        purple_invest_count += 1
-                        # print("purple_invest_count=" + str(purple_invest_count))
+                        purple_invest_count += 1                       
                     if g.firm_hire:
-                        purple_hiring_count += 1
-                        # print("purple_hiring_count=" + str(purple_hiring_count))
+                        purple_hiring_count += 1                        
         if green_count == 0:
             self.group.green_invest_rate_shown = '0.0'
             self.group.green_hire_rate_shown = '0.0'
@@ -115,16 +115,13 @@ class Reveal_Signal(Page):
         else:
             self.group.purple_invest_rate_shown = str(round(purple_invest_count / purple_count, 2))
             self.group.purple_hire_rate_shown = str(round(purple_hiring_count / purple_count, 2))
-          
-            
-            ##WW:
+
         if purple_count + green_count == 0:
             self.group.avg_hire_rate_shown = '0.0'
             self.group.avg_invest_rate_shown = '0.0'
         else:
             self.group.avg_hire_rate_shown = str(round((purple_hiring_count + green_hiring_count)/(green_count+purple_count) , 2))
-            self.group.avg_invest_rate_shown = str(round((purple_invest_count + green_invest_count)/(green_count+purple_count) , 2))
-            # print("views.Firm:  group=" + str(self.group) + ", self.group.worker_color=" + str(self.group.worker_color))
+            self.group.avg_invest_rate_shown = str(round((purple_invest_count + green_invest_count)/(green_count+purple_count) , 2))           
 
         table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
         table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
@@ -204,16 +201,16 @@ class Reveal_Signal(Page):
         }
     def is_displayed(self):
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        return self.player.id_in_group == 1 and self.round_number > third_stage_start
+        return self.player.id_in_group == 1 and self.round_number > third_stage_start and self.subsession.treatment != 0
 
 class WaitForWorkers(WaitPage):
-    wait_for_all_groups = False  # Set this to False to only wait for paired workers
+    wait_for_all_groups = False
     
     title_text = ""
     body_text = "請稍待求職者做決策，謝謝！" 
     def is_displayed(self):
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        return self.player.id_in_group == 2 and self.round_number > third_stage_start            
+        return self.player.id_in_group == 2 and self.round_number > third_stage_start and self.subsession.treatment != 0           
         
 class Worker(Page):
     form_model = 'group'
@@ -264,8 +261,7 @@ class Worker(Page):
         self.group.green_invest_rate_shown = str(round(green_invest_count / green_count, 2))
         self.group.purple_invest_rate_shown = str(round(purple_invest_count / purple_count, 2))
         self.group.green_hire_rate_shown = str(round(green_hiring_count / green_count, 2))
-        self.group.purple_hire_rate_shown = str(round(purple_hiring_count / purple_count, 2))
-##WW: 
+        self.group.purple_hire_rate_shown = str(round(purple_hiring_count / purple_count, 2)) 
         self.group.avg_hire_rate_shown = str(round((purple_hiring_count + green_hiring_count)/(green_count+purple_count), 2))
         self.group.avg_invest_rate_shown = str(round((purple_invest_count + green_invest_count)/(green_count+purple_count) , 2))
         print("views.Worker:  group=" + str(self.group) + ", self.group.worker_color=" + str(self.group.worker_color))
@@ -307,15 +303,9 @@ class Worker(Page):
             stage_round = self.round_number - second_stage_start
         elif third_stage_start < self.round_number <= fourth_stage_start:
             green_cost = C.THIRD_COST_OF_TRAINING
-            purple_cost = C.THIRD_COST_OF_TRAINING
-            #WW:
-            
-       #WW: commented out     "extra_text_green = "If a firm hires a GREEN worker, the firm earns a subsidy of " + \"
-            extra_text_green = " " #+ \
-                   #            str(self.subsession.third_stage_stipend_green) + " (s = " + str(self.subsession.third_stage_stipend_green) + ")"
-       #WW: commented out      extra_text_purple = "If a firm hires a PURPLE worker, the firm earns a subsidy of " + \
-            extra_text_purple = " " #+ \
-                  #              str(self.subsession.third_stage_stipend_purple) + " (s = " + str(self.subsession.third_stage_stipend_purple) + ")"
+            purple_cost = C.THIRD_COST_OF_TRAINING                  
+            extra_text_green = " " 
+            extra_text_purple = " "
             stage_num = 3
             stage_round = self.round_number - third_stage_start
         elif fourth_stage_start / 4 < self.round_number:
@@ -325,7 +315,7 @@ class Worker(Page):
             stage_round = self.round_number - fourth_stage_start
 
             
-        if third_stage_start < self.round_number:
+        if third_stage_start < self.round_number and self.session.config['costly_signaling']:
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
                 worker_send_signal= "您決定<b>傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"              
@@ -415,27 +405,20 @@ class Firm(Page):
         purple_hiring_count = 0.
         green_count = 0
         purple_count = 0
-        for s in self.subsession.in_previous_rounds():
-            # print("subsession " + str(s))
-            for g in s.get_groups():
-                # print("group "+str(g)+", g.worker_color="+str(g.worker_color)+", g.worker_invest="+str(g.worker_invest)+", g.firm_hire="+str(g.firm_hire))
-
+        for s in self.subsession.in_previous_rounds():          
+            for g in s.get_groups():               
                 if g.worker_color == 'GREEN':
                     green_count += 1
                     if g.worker_invest:
-                        green_invest_count += 1
-                        # print("green_invest_count="+str(green_invest_count))
+                        green_invest_count += 1                    
                     if g.firm_hire:
-                        green_hiring_count += 1
-                        # print("green_hiring_count=" + str(green_hiring_count))
+                        green_hiring_count += 1                       
                 elif g.worker_color == 'PURPLE':
                     purple_count += 1
                     if g.worker_invest:
-                        purple_invest_count += 1
-                        # print("purple_invest_count=" + str(purple_invest_count))
+                        purple_invest_count += 1                        
                     if g.firm_hire:
-                        purple_hiring_count += 1
-                        # print("purple_hiring_count=" + str(purple_hiring_count))
+                        purple_hiring_count += 1                        
         if green_count == 0:
             self.group.green_invest_rate_shown = '0.0'
             self.group.green_hire_rate_shown = '0.0'
@@ -451,14 +434,13 @@ class Firm(Page):
             self.group.purple_hire_rate_shown = str(round(purple_hiring_count / purple_count, 2))
           
             
-            ##WW:
         if purple_count + green_count == 0:
             self.group.avg_hire_rate_shown = '0.0'
             self.group.avg_invest_rate_shown = '0.0'
         else:
             self.group.avg_hire_rate_shown = str(round((purple_hiring_count + green_hiring_count)/(green_count+purple_count) , 2))
             self.group.avg_invest_rate_shown = str(round((purple_invest_count + green_invest_count)/(green_count+purple_count) , 2))
-            # print("views.Firm:  group=" + str(self.group) + ", self.group.worker_color=" + str(self.group.worker_color))
+            
 
         second_stage_start = self.subsession.num_first_stage_rounds
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
@@ -487,7 +469,6 @@ class Firm(Page):
             purple_cost = C.FIRST_COST_OF_TRAINING_PURPLE
             stage_num = 1
             stage_round = self.round_number
-            #WW:
             extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif second_stage_start < self.round_number <= third_stage_start:
             green_cost = C.SECOND_COST_OF_TRAINING
@@ -498,10 +479,6 @@ class Firm(Page):
         elif third_stage_start < self.round_number <= fourth_stage_start:
             green_cost = C.THIRD_COST_OF_TRAINING
             purple_cost = C.THIRD_COST_OF_TRAINING
-   #         extra_text_green = "If a firm hires a GREEN worker, the firm earns a subsidy of " + \
-                           #    str(self.subsession.third_stage_stipend_green) + " (s = " + str(self.subsession.third_stage_stipend_green) + #")"
-    #        extra_text_purple = "If a firm hires a PURPLE worker, the firm earns a subsidy of " + \
-                          #      str(self.subsession.third_stage_stipend_purple) + " (s = " + str(self.subsession.third_stage_stipend_purple) #+ ")"
             stage_num = 3
             stage_round = self.round_number - third_stage_start
         elif fourth_stage_start < self.round_number <= self.subsession.num_rounds:
@@ -510,7 +487,7 @@ class Firm(Page):
             stage_num = 4
             stage_round = self.round_number - fourth_stage_start
             
-        if third_stage_start < self.round_number:            
+        if third_stage_start < self.round_number and self.session.config['costly_signaling']:            
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
                 firm_see_signal= "您配對到的求職者決定<b>傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"
@@ -566,7 +543,6 @@ class Firm(Page):
             'purple_invest_count': str(purple_invest_count),
             'green_hiring_count': str(green_hiring_count),
             'purple_hiring_count': str(purple_hiring_count),
-             ##WW:
             'worker_choose_reveal': worker_choose_reveal,
             'firm_see_type': firm_see_type,
             'worker_choose_send': worker_choose_send,
@@ -585,8 +561,7 @@ class Firm(Page):
             'extra_text_purple': str(extra_text_purple),
             'extra_text_type': str(extra_text_type),
             'stage_num': str(stage_num),
-            'stage_round': str(stage_round),
-             #WW: 
+            'stage_round': str(stage_round), 
             'right_side_amounts': range(0, 11, 1)
         }
 
@@ -594,9 +569,8 @@ class Firm(Page):
         return self.player.id_in_group == 2 and self.round_number <= self.subsession.num_rounds
 
 
-class Instructions(Page):
-    ##WW:added form_model and form_fields
-    form_model = ''  # This will hide the "Next" button on the final round.
+class Instructions(Page):    
+    form_model = '' 
     form_fields = []
     def is_displayed(self):
         second_stage_start = self.subsession.num_first_stage_rounds
@@ -623,16 +597,27 @@ class Instructions(Page):
                 instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
                 instructions_text_3 = "本階段雇主<b>可以看見</b>配對到的求職者之類別。"
         elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds:
-                  #WW: commented out "instructions_text = "You are entering Stage 3 of the experiment.""
                 instructions_text = "您即將進入實驗的第三階段。"
                 instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
-                instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別，但求職者可以決定主動<b>揭露</b>其類別，亦可<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
-           
-        elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds:
-             #WW: commented out "  instructions_text = "You have finished the main portion of the experiment.  You will now be asked to complete two short tasks.  One of these two tasks will be randomly selected for payment.  Your earnings from the randomly selected task will be added to your total earnings from the experiment.""
+                if self.subsession.treatment == 11:
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
+                elif self.subsession.treatment == 10:
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
+                elif self.subsession.treatment == 1:
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
+                else:
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"
+        elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds:            
                 instructions_text = "您即將進入實驗的第四階段。"
                 instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
-                instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別，但求職者可以決定主動<b>揭露</b>其類別，亦可<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
+                if self.subsession.treatment == 11:
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
+                elif self.subsession.treatment == 10:
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
+                elif self.subsession.treatment == 1:
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
+                else:
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"        
 
         return {
             'instructions_text': instructions_text,
@@ -670,9 +655,6 @@ class Results(Page):
         return self.round_number <= self.subsession.num_rounds
 
     def vars_for_template(self):
-      #  print("views.py:  firm_payoff=" + str(
-       #     self.group.get_player_by_role('Firm').potential_payoff) + ", worker_payoff=" + str(
-        #    self.group.get_player_by_role('Worker').potential_payoff))
         second_stage_start = self.subsession.num_first_stage_rounds
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
         fourth_stage_start = (
@@ -717,11 +699,7 @@ class Results(Page):
             else: 
                 their_decision = "您配對到 "+str(self.group.worker_color)+" 求職者，求職者決定<b>不受訓</b>。"
         return {
-           # 'firm_belief_payoff': str(self.group.firm_belief_payoff),
-      #      'firm_payoff': str(self.group.get_player_by_role('Firm').potential_payoff),
-            'firm_normal_payoff': str(self.group.firm_normal_payoff),
-           # 'worker_belief_payoff': str(self.group.worker_belief_payoff),
-       #     'worker_payoff': str(self.group.get_player_by_role('Worker').potential_payoff),
+            'firm_normal_payoff': str(self.group.firm_normal_payoff),      
             'worker_normal_payoff': str(self.group.worker_normal_payoff),
             'stage_num': str(stage_num),
             'stage_round': str(stage_round),
@@ -737,37 +715,47 @@ class Task_Intro(Page):
         return self.round_number == self.subsession.num_rounds
     def vars_for_template(self):
         task_instructions_text_1 = "主要實驗已結束，接下來請您完成兩個額外項目。"
-  #      task_instructions_text_2 = "您有 200 法幣，您必須決定要將多少法幣投入抽獎，投入抽獎的法幣有一定的機率「中獎」。中獎的話您會獲得更多法幣，但沒中獎的話您將失去投入抽獎的法幣。兩個項目的中獎細節會在下一頁說明。"
-        task_instructions_text_3 = "實驗結束後電腦會隨機選取其中一個項目實現報酬，並將您於該項目獲得的法幣換算成新台幣加到最終報酬。"
+        task_instructions_text_2 = "實驗結束後電腦會隨機選取其中一個項目實現報酬，並將您於該項目獲得的法幣換算成新台幣加到最終報酬。"
         return {
             'task_instructions_text_1': task_instructions_text_1,
-           # 'task_instructions_text_2': task_instructions_text_2,
-            'task_instructions_text_3': task_instructions_text_3
+            'task_instructions_text_2': task_instructions_text_3
         }
 
-class Worker_Task_1(Page):
+class Task_1(Page):
     def is_displayed(self):
-        return self.player.id_in_group == 1 and self.round_number == self.subsession.num_rounds     
-    form_model = 'group'
-    form_fields = ['worker_task_1']
+        return self.round_number == self.subsession.num_rounds     
+    form_model = 'player'
+    form_fields = ['task_1']
 
-class Worker_Task_2(Page):
+class Task_2(Page):
     def is_displayed(self):
-        return self.player.id_in_group == 1 and self.round_number == self.subsession.num_rounds
-    form_model = 'group'
-    form_fields = ['worker_task_2']
+        return self.round_number == self.subsession.num_rounds
+    form_model = 'player'
+    form_fields = ['task_2']
 
-class Firm_Task_1(Page):
-    def is_displayed(self):
-        return self.player.id_in_group == 2 and self.round_number == self.subsession.num_rounds
-    form_model = 'group'
-    form_fields = ['firm_task_1']
+# class Worker_Task_1(Page):
+#     def is_displayed(self):
+#         return self.player.id_in_group == 1 and self.round_number == self.subsession.num_rounds     
+#     form_model = 'group'
+#     form_fields = ['worker_task_1']
 
-class Firm_Task_2(Page):
-    def is_displayed(self):
-        return self.player.id_in_group == 2 and self.round_number == self.subsession.num_rounds
-    form_model = 'group'
-    form_fields = ['firm_task_2']    
+# class Worker_Task_2(Page):
+#     def is_displayed(self):
+#         return self.player.id_in_group == 1 and self.round_number == self.subsession.num_rounds
+#     form_model = 'group'
+#     form_fields = ['worker_task_2']
+
+# class Firm_Task_1(Page):
+#     def is_displayed(self):
+#         return self.player.id_in_group == 2 and self.round_number == self.subsession.num_rounds
+#     form_model = 'group'
+#     form_fields = ['firm_task_1']
+
+# class Firm_Task_2(Page):
+#     def is_displayed(self):
+#         return self.player.id_in_group == 2 and self.round_number == self.subsession.num_rounds
+#     form_model = 'group'
+#     form_fields = ['firm_task_2']    
 
 
 class Payoffs(Page):
@@ -805,6 +793,7 @@ class Payoffs(Page):
         }
 
 page_sequence = [
+    Computer_Number,
     Begin_Experiment,
     SessionWideWaitPage,
     Instructions,
@@ -815,10 +804,12 @@ page_sequence = [
     ResultsWaitPage,
     Results,    
     Task_Intro,
-    Worker_Task_1,
-    Firm_Task_1,
-    Worker_Task_2,    
-    Firm_Task_2,
+    # Worker_Task_1,
+    # Firm_Task_1,
+    # Worker_Task_2,    
+    # Firm_Task_2,
+    Task_1,
+    Task_2,
     TaskWaitPage,
     Payoffs
 ]
