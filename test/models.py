@@ -60,8 +60,6 @@ class Subsession(BaseSubsession):
     num_third_stage_rounds = models.IntegerField(initial=0)
     num_fourth_stage_rounds = models.IntegerField(initial=0)
     num_rounds = models.IntegerField(initial=0)
-    third_stage_stipend_green = models.IntegerField(initial=0)
-    third_stage_stipend_purple = models.IntegerField(initial=0)
     treatment = models.IntegerField(initial=-1)
     
     def creating_session(self):
@@ -69,7 +67,7 @@ class Subsession(BaseSubsession):
     # If the current round number is 1, this conditional statement proceeds to create a map that associates round numbers
     # with a boolean value indicating whether it's a paid round or not. This mapping is stored in the variable self.paying_round,
     # and it's generated randomly between rounds 1 and C.NUM_ROUNDS.
-    # The subsequent if statements check for certain configuration options in the self.session.config dictionary. If a configuration option is found, it's assigned to the respective class attribute. For example, self.use_firm_belief_elicitation and self.use_worker_belief_elicitation are set based on the presence of 'use_firm_belief_elicitation' and 'use_worker_belief_elicitation' in the session configuration. Similar checks are done for other parameters like the number of rounds in different stages (self.num_first_stage_rounds, self.num_second_stage_rounds, etc.) and stipend values for the third stage.
+    # The subsequent if statements check for certain configuration options in the self.session.config dictionary. If a configuration option is found, it's assigned to the respective class attribute. For example, self.use_firm_belief_elicitation and self.use_worker_belief_elicitation are set based on the presence of 'use_firm_belief_elicitation' and 'use_worker_belief_elicitation' in the session configuration. Similar checks are done for other parameters like the number of rounds in different stages (self.num_first_stage_rounds, self.num_second_stage_rounds, etc.) for the third stage.
         if 'use_firm_belief_elicitation' in self.session.config:
             self.use_firm_belief_elicitation = self.session.config['use_firm_belief_elicitation']
 
@@ -110,16 +108,6 @@ class Subsession(BaseSubsession):
 
         self.num_rounds = self.num_first_stage_rounds + self.num_second_stage_rounds + self.num_third_stage_rounds \
                           + self.num_fourth_stage_rounds
-
-        if 'third_stage_stipend_purple' in self.session.config:
-            self.third_stage_stipend_purple = self.session.config['third_stage_stipend_purple']
-        else:
-            self.third_stage_stipend_purple = 200
-
-        if 'third_stage_stipend_green' in self.session.config:
-            self.third_stage_stipend_green = self.session.config['third_stage_stipend_green']
-        else:
-            self.third_stage_stipend_green = 0
 
         # assign the players into groups, make it so that players with even IDs are always
         # workers and odd IDs are always firms
@@ -196,7 +184,6 @@ class Subsession(BaseSubsession):
             g.round_num = self.round_number
             g.use_firm_belief = self.use_firm_belief_elicitation
             g.use_worker_belief = self.use_worker_belief_elicitation
-            g.stipend = 0
             if 0 < self.round_number <= self.num_first_stage_rounds:
                 if g.worker_color == 'GREEN':
                     g.cost_of_training = C.FIRST_COST_OF_TRAINING_GREEN
@@ -205,11 +192,7 @@ class Subsession(BaseSubsession):
             elif self.num_first_stage_rounds < self.round_number <= third_stage_start:
                 g.cost_of_training = C.SECOND_COST_OF_TRAINING
             elif third_stage_start < self.round_number <= fourth_stage_start:
-                g.cost_of_training = C.THIRD_COST_OF_TRAINING
-                if g.worker_color == 'GREEN':
-                    g.stipend = self.third_stage_stipend_green
-                elif g.worker_color == 'PURPLE':
-                    g.stipend = self.third_stage_stipend_purple
+                g.cost_of_training = C.THIRD_COST_OF_TRAINING               
             elif fourth_stage_start < self.round_number <= self.num_rounds:
                 g.cost_of_training = C.FOURTH_COST_OF_TRAINING               
 
@@ -492,7 +475,6 @@ class Group(BaseGroup):
 
     worker_color = models.StringField()
     cost_of_training = models.IntegerField()
-    stipend = models.IntegerField()
     # the current round number because you can't access that info from the Constants on the actual pages
     round_num = models.IntegerField()
     # whether or not to ask the firm for their belief of how likely the worker invested
@@ -514,39 +496,39 @@ class Group(BaseGroup):
         if self.field_maybe_none('send_signal') is None:                       
             if self.worker_invest and self.firm_hire:
                 worker_normal_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training)
-                firm_normal_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
+                firm_normal_payoff = (C.FIRM_HIRE_INVEST)
             elif self.worker_invest and not self.firm_hire:
                 worker_normal_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training)
                 firm_normal_payoff = (C.FIRM_NOT_HIRE_INVEST)
             elif not self.worker_invest and self.firm_hire:
                 worker_normal_payoff = (C.WORKER_HIRE_NOT_INVEST)
-                firm_normal_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
+                firm_normal_payoff = (C.FIRM_HIRE_NOT_INVEST)
             elif not self.worker_invest and not self.firm_hire:
                 worker_normal_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST)
                 firm_normal_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)
         elif self.field_maybe_none('send_signal'):
             if self.worker_invest and self.firm_hire:
                 worker_normal_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training-C.SIGNALING_COST)
-                firm_normal_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
+                firm_normal_payoff = (C.FIRM_HIRE_INVEST)
             elif self.worker_invest and not self.firm_hire:
                 worker_normal_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training-C.SIGNALING_COST)
                 firm_normal_payoff = (C.FIRM_NOT_HIRE_INVEST)
             elif not self.worker_invest and self.firm_hire:
                 worker_normal_payoff = (C.WORKER_HIRE_NOT_INVEST-C.SIGNALING_COST)
-                firm_normal_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
+                firm_normal_payoff = (C.FIRM_HIRE_NOT_INVEST)
             elif not self.worker_invest and not self.firm_hire:
                 worker_normal_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST-C.SIGNALING_COST)
                 firm_normal_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)
         else: 
             if self.worker_invest and self.firm_hire:
                 worker_normal_payoff = (C.WORKER_HIRE_INVEST - self.cost_of_training)
-                firm_normal_payoff = (C.FIRM_HIRE_INVEST + self.stipend)
+                firm_normal_payoff = (C.FIRM_HIRE_INVEST)
             elif self.worker_invest and not self.firm_hire:
                 worker_normal_payoff = (C.WORKER_NOT_HIRE_INVEST - self.cost_of_training)
                 firm_normal_payoff = (C.FIRM_NOT_HIRE_INVEST)
             elif not self.worker_invest and self.firm_hire:
                 worker_normal_payoff = (C.WORKER_HIRE_NOT_INVEST)
-                firm_normal_payoff = (C.FIRM_HIRE_NOT_INVEST + self.stipend)
+                firm_normal_payoff = (C.FIRM_HIRE_NOT_INVEST)
             elif not self.worker_invest and not self.firm_hire:
                 worker_normal_payoff = (C.WORKER_NOT_HIRE_NOT_INVEST)
                 firm_normal_payoff = (C.FIRM_NOT_HIRE_NOT_INVEST)        

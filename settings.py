@@ -50,8 +50,6 @@ SESSION_CONFIG_DEFAULTS = {
     'num_second_stage_rounds': 1,
     'num_third_stage_rounds': 1,
     'num_fourth_stage_rounds': 1,
-    'third_stage_stipend_green': 0,
-    'third_stage_stipend_purple': 0,
     'real_world_currency_per_point': 1/7,
     'app_sequence': ['pure_colorblind'],
     'participation_fee': 100,
