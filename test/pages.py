@@ -643,10 +643,7 @@ class ResultsWaitPage(WaitPage):
         self.group.set_payoffs()
         for player in self.subsession.get_players():
             player.set_payoffs()
-    def before_next_page(self):
-        # Carry over computer_num value from the last round
-        last_round_player = self.player.in_round(self.round_number - 1)
-        self.player.computer_num = last_round_player.computer_num
+
 
 
 class SessionWideWaitPage(WaitPage):
@@ -658,7 +655,10 @@ class SessionWideWaitPage(WaitPage):
 class Results(Page):
     def is_displayed(self):
         return self.round_number <= self.subsession.num_rounds
-
+    def before_next_page(self):
+        # Carry over computer_num value from the last round
+        last_round_player = self.player.in_round(self.round_number - 1)
+        self.player.computer_num = last_round_player.computer_num
     def vars_for_template(self):
         second_stage_start = self.subsession.num_first_stage_rounds
         third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
