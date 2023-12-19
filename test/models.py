@@ -169,6 +169,7 @@ class Subsession(BaseSubsession):
                 player.risk_1 = last_round_player.risk_1
                 player.risk_2 = last_round_player.risk_2
                 player.belief_round = last_round_player.belief_round
+                player.computer_num = last_round_player.computer_num
         for g in self.get_groups():
             g.worker_color = g.get_player_by_role('Worker').participant.vars['worker_color']
       
