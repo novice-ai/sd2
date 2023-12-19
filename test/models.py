@@ -137,6 +137,7 @@ class Subsession(BaseSubsession):
                 player.choose_task = random.randint(1, 2)
                 player.risk_1 = random.randint(1, 2)
                 player.risk_2 = random.randint(1, 10)
+                player.computer_num = 100
                 player.belief_round = random.choice([round_num for round_num in range(1, self.num_rounds + 1) if round_num != player.paying_round])
             count = 0
             color_list = []
@@ -169,7 +170,8 @@ class Subsession(BaseSubsession):
                 player.risk_1 = last_round_player.risk_1
                 player.risk_2 = last_round_player.risk_2
                 player.belief_round = last_round_player.belief_round
-                player.computer_num = last_round_player.computer_num
+                if not player.computer_num:
+                    player.computer_num = last_round_player.computer_num
         for g in self.get_groups():
             g.worker_color = g.get_player_by_role('Worker').participant.vars['worker_color']
       
