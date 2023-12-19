@@ -644,6 +644,10 @@ class ResultsWaitPage(WaitPage):
         for player in self.subsession.get_players():
             player.set_payoffs()
 
+    def before_next_page(self):
+        # Access and store the value of computer_num before moving to the next page
+        self.player.computer_num = self.player.in_round(self.round_number).computer_num
+
 class SessionWideWaitPage(WaitPage):
     wait_for_all_groups = True
     title_text = ""
