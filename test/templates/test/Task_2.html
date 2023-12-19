@@ -26,11 +26,6 @@
             if (nextButton) {
                 nextButton.innerText = '送出';
             }
-            let submitButtonMessage = document.createElement('span');
-            submitButtonMessage.style.marginLeft = '5px';
-            submitButtonMessage.innerText = '（送出後不得再修改）';
-
-            nextButton.parentNode.appendChild(submitButtonMessage);
             // Add the 'novalidate' attribute to the form to suppress default validation messages
             form.setAttribute('novalidate', '');
 
