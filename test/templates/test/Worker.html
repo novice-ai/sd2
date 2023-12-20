@@ -314,7 +314,21 @@
 
     function submitForm() {
         let form = document.getElementById('form');
-
+        form.addEventListener('submit', function (event) {
+            // Check if the form is valid
+            if (form.checkValidity()) {
+                // Clear the custom validity for the firm_hire field
+                let firmField = document.getElementsByName('firm_hire')[0];
+                if (firmField) {
+                    firmField.setCustomValidity('');
+                }
+            } else {
+                // Handle the case where the form is still invalid
+                alert('請完整回答再送出');
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+        
         // Check if the dropdown is empty
         let dropdownValues = Array.from(allAdditionalChoiceSpans)
             .map(span => span.querySelector('select').value)
