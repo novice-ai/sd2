@@ -643,8 +643,9 @@ class ResultsWaitPage(WaitPage):
         self.group.set_payoffs()
         for player in self.subsession.get_players():
             player.set_payoffs()
-            last_round_player = player.in_round(self.round_number - 1)
-            player.computer_num = last_round_player.computer_num            
+            if self.round_number >= 2:
+                last_round_player = player.in_round(self.round_number - 1)
+                player.computer_num = last_round_player.computer_num            
 
 
 
