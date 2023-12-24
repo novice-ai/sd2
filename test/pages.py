@@ -318,7 +318,7 @@ class Worker(Page):
         if third_stage_start < self.round_number and self.session.config['costly_signaling']:
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
-                worker_send_signal= "您決定<b>傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"              
+                worker_send_signal= "您決定傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 10） 。"              
                 table_invest_hire = "{0} - c - 10, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0} - 10, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -490,7 +490,7 @@ class Firm(Page):
         if third_stage_start < self.round_number and self.session.config['costly_signaling']:            
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
-                firm_see_signal= "您配對到的求職者決定<b>傳送</b>「我願意投入受訓」之訊息（訊息成本為 10） 。"
+                firm_see_signal= "您配對到的求職者傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 10） 。"
                 table_invest_hire = "{0} - c - 10, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0} - 10, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -499,7 +499,7 @@ class Firm(Page):
                 table_not_invest_not_hire = "{0}-10,{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
             else:
-                firm_see_signal= "您配對到的求職者決定<b>不傳送訊息</b>（訊息成本為 10） 。"
+                firm_see_signal= "您配對到的求職者<b>未傳送訊息</b>（訊息成本為 10） 。"
                 table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
