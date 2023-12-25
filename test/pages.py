@@ -522,9 +522,9 @@ class Firm(Page):
         if third_stage_start < self.round_number and self.session.config['type_disclosure']:            
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
-                firm_see_type= "您配對到的求職者決定<b>揭露</b>其類別為 "+str(self.group.worker_color)+" 。"
+                firm_see_type= "您配對到的求職者揭露其類別為 "+"<b>str(self.group.worker_color)</b>"+" 。"
             else:
-                firm_see_type= "您配對到的求職者決定<b>不揭露</b>其類別。"
+                firm_see_type= "您配對到的求職者<b>未揭露其類別</b>。"
 
         else:
             worker_choose_reveal = ""
