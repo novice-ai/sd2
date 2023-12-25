@@ -349,7 +349,7 @@ class Worker(Page):
         if third_stage_start < self.round_number and self.session.config['type_disclosure']:
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
-                worker_reveal_type= "您決定<b>接露</b>您的類別。"
+                worker_reveal_type= "您決定<b>揭露</b>您的類別。"
             else:
                 worker_reveal_type= "您決定<b>不揭露</b>您的類別。"
         else:
@@ -521,8 +521,11 @@ class Firm(Page):
         
         if third_stage_start < self.round_number and self.session.config['type_disclosure']:            
             worker_choose_reveal = self.group.reveal_type
-            if worker_choose_reveal:
-                firm_see_type= "您配對到的求職者揭露其類別為 "+"<b>str(self.group.worker_color)</b>"+" 。"
+            if worker_choose_reveal:      
+                if self.group.worker_color == 'GREEN':  
+                    firm_see_type= "您配對到的求職者揭露其類別為 <b>GREEN</b>" 。"
+                else:
+                    firm_see_type= "您配對到的求職者揭露其類別為 <b>PURPLE</b>" 。"
             else:
                 firm_see_type= "您配對到的求職者<b>未揭露其類別</b>。"
 
