@@ -603,11 +603,11 @@ class Instructions(Page):
                 instructions_text = "您即將進入實驗的第三階段。"
                 instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
                 if self.subsession.treatment == 11:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」<b>的訊息，訊息成本為 10 法幣。"
                 elif self.subsession.treatment == 10:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
                 elif self.subsession.treatment == 1:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以傳送<b>「我願意投入受訓」的</b>訊息，訊息成本為 10 法幣。"
                 else:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"
         elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds:            

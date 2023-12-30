@@ -323,6 +323,10 @@
                 if (firmField) {
                     firmField.setCustomValidity('');
                 }
+                let firmField2 = document.getElementsByName('firm_investment_belief')[0];
+                if (firmField2) {
+                    firmField2.setCustomValidity('');
+                }
             } else {
                 // Handle the case where the form is still invalid
                 alert('請完整回答再送出');
