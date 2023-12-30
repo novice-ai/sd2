@@ -29,7 +29,8 @@ SESSION_CONFIG_DEFAULTS = {
     'app_sequence': ['test'],
     'participation_fee': 100,
     'type_disclosure': True,
-    'costly_signaling': True
+    'costly_signaling': True,
+    'green_is_majority': True
 }
 
 # Additional oTree configurations and settings go here

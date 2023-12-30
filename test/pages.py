@@ -318,16 +318,16 @@ class Worker(Page):
         if third_stage_start < self.round_number and self.session.config['costly_signaling']:
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
-                worker_send_signal= "您決定傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 10） 。"              
-                table_invest_hire = "{0} - c - 10, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
-                table_not_invest_hire = "{0} - 10, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
+                worker_send_signal= "您決定傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 "+str(C.SIGNALING_COST)+" 法幣） 。"             
+                table_invest_hire = "{0} - c - str(C.SIGNALING_COST), {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
+                table_not_invest_hire = "{0} - str(C.SIGNALING_COST), {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
-                table_invest_not_hire = "{0} - c - 10, {1}".format(str(C.WORKER_NOT_HIRE_INVEST),
+                table_invest_not_hire = "{0} - c - str(C.SIGNALING_COST), {1}".format(str(C.WORKER_NOT_HIRE_INVEST),
                                                       str(C.FIRM_NOT_HIRE_INVEST))
-                table_not_invest_not_hire = "{0} - 10,{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
+                table_not_invest_not_hire = "{0} - str(C.SIGNALING_COST),{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
             else:
-                worker_send_signal= "您決定<b>不傳送訊息</b>（訊息成本為 10） 。"               
+                worker_send_signal= "您決定<b>不傳送訊息</b>（訊息成本為 "+str(C.SIGNALING_COST)+" 法幣） 。"            
                 table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -490,16 +490,16 @@ class Firm(Page):
         if third_stage_start < self.round_number and self.session.config['costly_signaling']:            
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
-                firm_see_signal= "您配對到的求職者傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 10） 。"
-                table_invest_hire = "{0} - c - 10, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
-                table_not_invest_hire = "{0} - 10, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
+                firm_see_signal= "您配對到的求職者傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 "+str(C.SIGNALING_COST)+" 法幣） 。"
+                table_invest_hire = "{0} - c - str(C.SIGNALING_COST), {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
+                table_not_invest_hire = "{0} - str(C.SIGNALING_COST), {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
-                table_invest_not_hire = "{0} - c - 10, {1}".format(str(C.WORKER_NOT_HIRE_INVEST),
+                table_invest_not_hire = "{0} - c - str(C.SIGNALING_COST), {1}".format(str(C.WORKER_NOT_HIRE_INVEST),
                                                       str(C.FIRM_NOT_HIRE_INVEST))
-                table_not_invest_not_hire = "{0}-10,{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
+                table_not_invest_not_hire = "{0}-str(C.SIGNALING_COST),{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
             else:
-                firm_see_signal= "您配對到的求職者<b>未傳送訊息</b>（訊息成本為 10） 。"
+                firm_see_signal= "您配對到的求職者<b>未傳送訊息</b>（訊息成本為 "+str(C.SIGNALING_COST)+" 法幣） 。"
                 table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -603,22 +603,22 @@ class Instructions(Page):
                 instructions_text = "您即將進入實驗的第三階段。"
                 instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
                 if self.subsession.treatment == 11:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 "+str(C.SIGNALING_COST)+ " 法幣。"
                 elif self.subsession.treatment == 10:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
                 elif self.subsession.treatment == 1:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 10 法幣。"
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以<b>傳送</b>「我願意投入受訓」的訊息，訊息成本為 "+str(C.SIGNALING_COST)+ " 法幣。"
                 else:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"
         elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds:            
                 instructions_text = "您即將進入實驗的第四階段。"
                 instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
                 if self.subsession.treatment == 11:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」<b>的訊息，訊息成本為 10 法幣。"
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」<b>的訊息，訊息成本為 "+str(C.SIGNALING_COST)+ " 法幣。"
                 elif self.subsession.treatment == 10:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
                 elif self.subsession.treatment == 1:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以傳送<b>「我願意投入受訓」的</b>訊息，訊息成本為 10 法幣。"
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以傳送<b>「我願意投入受訓」的</b>訊息，訊息成本為 "+str(C.SIGNALING_COST)+ " 法幣。"
                 else:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"        
 
