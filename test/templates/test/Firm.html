@@ -319,14 +319,9 @@
             // Check if the form is valid
             if (form.checkValidity()) {
                 // Clear the custom validity for the firm_hire field
-                let firmField = document.getElementsByName('firm_hire')[0];
-                if (firmField) {
-                    firmField.setCustomValidity('');
-                }
-                let firmField2 = document.getElementsByName('firm_investment_belief')[0];
-                if (firmField2) {
-                    firmField2.setCustomValidity('');
-                }
+                document.querySelectorAll('form *').forEach(field => {
+                    field.setCustomValidity('');
+                });
             } else {
                 // Handle the case where the form is still invalid
                 alert('請完整回答再送出');
