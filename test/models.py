@@ -83,7 +83,7 @@ class Subsession(BaseSubsession):
                 else:
                     self.treatment = 0
 
-         if 'green_is_majority' in self.session.config:
+        if 'green_is_majority' in self.session.config:
             if self.session.config['green_is_majority']:
                 self.green_majority = 1
             else:
