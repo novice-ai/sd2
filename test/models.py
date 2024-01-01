@@ -35,7 +35,7 @@ class C(BaseConstants):
     SECOND_COST_OF_TRAINING = 200
     THIRD_COST_OF_TRAINING = 200
     FOURTH_COST_OF_TRAINING = 200
-    SIGNALING_COST = 10
+    SIGNALING_COST = 100
     WORKER_HIRE_INVEST = 1800
     WORKER_HIRE_NOT_INVEST = 1400
     WORKER_NOT_HIRE_INVEST = 1000
@@ -388,7 +388,7 @@ class Group(BaseGroup):
     send_signal = models.BooleanField(
         initial = None,
         doc="""Whether the worker wants to send costly message""",
-        verbose_name='您要傳送<b>「我願意投入受訓」</b>的訊息給雇主嗎? 傳送訊息的成本為 10 法幣。',
+        verbose_name='您要傳送<b>「我願意投入受訓」</b>的訊息給雇主嗎? 傳送訊息的成本為 100 法幣。',
         choices=[
             [True, '是'], 
             [False, '否'], 
