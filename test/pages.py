@@ -640,7 +640,7 @@ class TaskWaitPage(WaitPage):
             player.set_payoffs()
     
 class ResultsWaitPage(WaitPage):
-    wait_for_all_group = True
+    wait_for_all_groups = True
     title_text = ""
     body_text = "請稍待其他人，謝謝！"
     def after_all_players_arrive(self):
