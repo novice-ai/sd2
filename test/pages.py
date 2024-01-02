@@ -640,12 +640,12 @@ class TaskWaitPage(WaitPage):
             player.set_payoffs()
     
 class ResultsWaitPage(WaitPage):
-    wait_for_all_groups = True
+    wait_for_all_players = True
     title_text = ""
     body_text = "請稍待其他人，謝謝！"
     def after_all_players_arrive(self):
         self.group.set_payoffs()
-        for player in self.subsession.get_players():
+        for player in self.group.get_players():
             player.set_payoffs()
             if self.round_number >= 2:
                 last_round_player = player.in_round(self.round_number - 1)
