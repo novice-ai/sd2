@@ -61,7 +61,7 @@ class Subsession(BaseSubsession):
     num_fourth_stage_rounds = models.IntegerField(initial=0)
     num_rounds = models.IntegerField(initial=0)
     treatment = models.IntegerField(initial=-1)
-    green_majority = models.IntegerField(initial=-1)
+    purple_majority = models.IntegerField(initial=-1)
     
     def creating_session(self):
         self.group_randomly(fixed_id_in_group=True)
@@ -83,11 +83,11 @@ class Subsession(BaseSubsession):
                 else:
                     self.treatment = 0
 
-        if 'green_is_majority' in self.session.config:
-            if self.session.config['green_is_majority']:
-                self.green_majority = 1
+        if 'purple_is_majority' in self.session.config:
+            if self.session.config['purple_is_majority']:
+                self.purple_majority = 1
             else:
-                self.green_majority = 0
+                self.purple_majority = 0
 
         if 'num_first_stage_rounds' in self.session.config:
             self.num_first_stage_rounds = self.session.config['num_first_stage_rounds']
@@ -149,17 +149,18 @@ class Subsession(BaseSubsession):
             color_list = []
             for g in self.get_groups():
                 count += 1
-                if 'green_is_majority' in self.session.config:
-                    if self.session.config['green_is_majority']:
+                if 'purple_is_majority' in self.session.config:
+                    if self.session.config['purple_is_majority']:
                         if count % 3 == 1:
-                            color_list.append(C.COLORS[0])  # Append 'PURPLE'
-                        else:
                             color_list.append(C.COLORS[1])  # Append 'GREEN'
+                        else:
+                            color_list.append(C.COLORS[0])  # Append 'PURPLE'
                     else:
                         if count % 3 == 1:
-                            color_list.append(C.COLORS[1])  # Append 'GREEN'
-                        else:
                             color_list.append(C.COLORS[0])  # Append 'PURPLE'
+                        else:
+                            color_list.append(C.COLORS[1])  # Append 'GREEN'
+                        
             random.shuffle(color_list)
             count = 0
 

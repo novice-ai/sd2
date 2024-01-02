@@ -5,14 +5,13 @@ SESSION_CONFIGS = [
         'name': 'test',
         'display_name': 'test',
         'app_sequence': ['test'],
-        'num_demo_participants': 2,
+        'num_demo_participants': 12,
    
     }
 ]
 
 SESSION_CONFIG_DEFAULTS = {
     'name': 'My Default Session',
-    'participation_fee': 0,
     'display_name': 'Default Session',
     'num_demo_participants': 6,
     'real_world_currency_per_point': 1/7,
@@ -30,7 +29,7 @@ SESSION_CONFIG_DEFAULTS = {
     'participation_fee': 100,
     'type_disclosure': True,
     'costly_signaling': True,
-    'green_is_majority': True
+    'purple_is_majority': True
 }
 
 # Additional oTree configurations and settings go here
