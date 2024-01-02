@@ -151,12 +151,12 @@ class Subsession(BaseSubsession):
                 count += 1
                 if 'purple_is_majority' in self.session.config:
                     if self.session.config['purple_is_majority']:
-                        if count % 3 == 1:
+                        if count % 2 == 1:
                             color_list.append(C.COLORS[1])  # Append 'GREEN'
                         else:
                             color_list.append(C.COLORS[0])  # Append 'PURPLE'
                     else:
-                        if count % 3 == 1:
+                        if count % 2 == 1:
                             color_list.append(C.COLORS[0])  # Append 'PURPLE'
                         else:
                             color_list.append(C.COLORS[1])  # Append 'GREEN'
