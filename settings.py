@@ -8,6 +8,13 @@ SESSION_CONFIGS = [
         'num_demo_participants': 12,
    
     }
+     {
+        'name': 'test2',
+        'display_name': 'test2',
+        'app_sequence': ['test2'],
+        'num_demo_participants': ,
+   
+    }
 ]
 
 SESSION_CONFIG_DEFAULTS = {
