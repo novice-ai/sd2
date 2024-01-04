@@ -574,8 +574,8 @@ class Instructions(Page):
         #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
         if self.round_number == 1:
                 instructions_text = "您即將進入實驗的第一階段。"
-                instructions_text_2 = "本階段的<b>第 1 回合至第 10 回合</b>， <b>GREEN</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 <b>600</b> 法幣 (c = 600)。" 
-                instructions_text_3 = "本階段的<b>第 11 回合至第 20 回合</b>， <b>GREEN</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)。"   
+                instructions_text_2 = "本階段的<b>第 1 回合至第 10 回合</b>，<b>GREEN</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 <b>600</b> 法幣 (c = 600)。" 
+                instructions_text_3 = "本階段的<b>第 11 回合至第 20 回合</b>，<b>GREEN</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)。"   
                 instructions_text_4 = "本階段雇主<b>可以看見</b>配對到的求職者之類別。"  
         elif self.round_number == 1+self.subsession.num_first_stage_rounds:
                 instructions_text = "您即將進入實驗的第二階段。"
