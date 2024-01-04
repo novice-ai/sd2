@@ -627,7 +627,7 @@ class TaskWaitPage(WaitPage):
     def after_all_players_arrive(self):
         # Iterate through all groups and call set_payoffs
         # self.group.set_payoffs()
-        for player in self.subsession.get_players():
+        for player in self.group.get_players():
             player.set_payoffs()
     
 class ResultsWaitPage(WaitPage):
