@@ -694,9 +694,15 @@ class Results(Page):
             else: 
                 your_decision = "您決定<b>不錄取</b>"
             if self.group.worker_invest:
-                their_decision = "您配對到 "+str(self.group.worker_color)+" 求職者，求職者決定<b>受訓</b>。"
-            else: 
-                their_decision = "您配對到 "+str(self.group.worker_color)+" 求職者，求職者決定<b>不受訓</b>。"
+                if self.group.worker_color == 'GREEN':
+                    their_decision = "您配對到 <b>GREEN</b> 求職者，求職者決定<b>受訓</b>。"
+                else:            
+                    their_decision = "您配對到 <b>PURPLE</b> 求職者，求職者決定<b>受訓</b>。"
+            else:                 
+                if self.group.worker_color == 'GREEN':
+                    their_decision = "您配對到 <b>GREEN</b> 求職者，求職者決定<b>不受訓</b>。"
+                else:            
+                    their_decision = "您配對到 <b>PURPLE</b> 求職者，求職者決定<b>不受訓</b>。"
         return {
             'firm_normal_payoff': str(self.group.firm_normal_payoff),      
             'worker_normal_payoff': str(self.group.worker_normal_payoff),
