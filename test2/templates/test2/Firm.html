@@ -92,10 +92,10 @@
 
     <div class="row">
         <div class="col-1-2">
-            <p>您的角色是雇主。</p>
+            <p>您的角色是<b>雇主。</b></p>
             <p>{{extra_text_type}}</p>
-            <p>GREEN 求職者的受訓成本為 {{ green_cost }} (c = {{ green_cost }})。</p>
-            <p>PURPLE 求職者的受訓成本為 {{ purple_cost }} (c = {{ purple_cost }})。</p>
+            <p><b>GREEN</b> 求職者的受訓成本為 <b>{{ green_cost }}</b> (c = {{ green_cost }})。</p>
+            <p><b>PURPLE</b> 求職者的受訓成本為 <b>{{ purple_cost }}</b> (c = {{ purple_cost }})。</p>
             <p>{{ extra_text_green }}</p>
             <p>{{ extra_text_purple }}</p>
             <p>{{firm_see_type}}</p>
@@ -398,18 +398,6 @@
             }
         }
     }
-
-    document.addEventListener("DOMContentLoaded", function (event) {
-        // Change the error message for the firm_hire field
-        let firmField = document.getElementsByName('firm_hire')[0];
-        if (firmField) {
-            firmField.addEventListener('invalid', function (event) {
-                event.preventDefault();
-                // Customize the error message or set it to an empty string to remove it
-                event.target.setCustomValidity('Your custom error message goes here');
-            });
-        }
-    });
 
     document.addEventListener("DOMContentLoaded", function (event) {
         for (let radio of document.querySelectorAll('input[type=radio]')) {

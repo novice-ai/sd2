@@ -149,13 +149,11 @@ class Reveal_Signal(Page):
             purple_cost = C.HIGH_COST_OF_TRAINING
             stage_num = 1
             stage_round = self.round_number
-            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif second_stage_start/2 < self.round_number <= second_stage_start:
             green_cost = C.LOW_COST_OF_TRAINING
             purple_cost = C.LOW_COST_OF_TRAINING
             stage_num = 1
             stage_round = self.round_number
-            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif second_stage_start < self.round_number:
             green_cost = C.LOW_COST_OF_TRAINING
             purple_cost = C.LOW_COST_OF_TRAINING
@@ -284,13 +282,11 @@ class Worker(Page):
             purple_cost = C.HIGH_COST_OF_TRAINING
             stage_num = 1
             stage_round = self.round_number
-            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif second_stage_start/2 < self.round_number <= second_stage_start:
             green_cost = C.LOW_COST_OF_TRAINING
             purple_cost = C.LOW_COST_OF_TRAINING
             stage_num = 1
             stage_round = self.round_number
-            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif second_stage_start < self.round_number:
             green_cost = C.LOW_COST_OF_TRAINING
             purple_cost = C.LOW_COST_OF_TRAINING
@@ -426,14 +422,6 @@ class Firm(Page):
             
 
         second_stage_start = self.subsession.num_first_stage_rounds
-        # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        # fourth_stage_start = (
-        #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
-        # if second_stage_start < self.subsession.round_number <= fourth_stage_start and self.group.worker_color == 'PURPLE':
-        #     table_invest_hire = "{0} - c, {1} + s".format(str(C.WORKER_HIRE_INVEST),
-        #                                                   str(C.FIRM_HIRE_INVEST))
-        #     table_not_invest_hire = "{0}, {1} + s".format(str(C.WORKER_HIRE_NOT_INVEST),
-        #                                                   str(C.FIRM_HIRE_NOT_INVEST))
 
         green_cost = 0
         purple_cost = 0
@@ -452,13 +440,21 @@ class Firm(Page):
             purple_cost = C.HIGH_COST_OF_TRAINING
             stage_num = 1
             stage_round = self.round_number
-            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
+            if self.group.worker_color == 'GREEN':
+                extra_text_type = "您配對到 <b>GREEN</b> 的求職者。"
+            else:
+                extra_text_type = "您配對到 <b>PURPLE</b> 的求職者。"
+            # extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif second_stage_start/2 < self.round_number <= second_stage_start:
             green_cost = C.LOW_COST_OF_TRAINING
             purple_cost = C.LOW_COST_OF_TRAINING
             stage_num = 1
             stage_round = self.round_number
-            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
+            if self.group.worker_color == 'GREEN':
+                extra_text_type = "您配對到 <b>GREEN</b> 的求職者。"
+            else:
+                extra_text_type = "您配對到 <b>PURPLE</b> 的求職者。"
+            # extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif second_stage_start < self.round_number:
             green_cost = C.LOW_COST_OF_TRAINING
             purple_cost = C.LOW_COST_OF_TRAINING
@@ -578,18 +574,18 @@ class Instructions(Page):
         #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
         if self.round_number == 1:
                 instructions_text = "您即將進入實驗的第一階段。"
-                instructions_text_2 = "本階段的<b>第 1 回合至第 10 回合</b>， <b>GREEN</b> 求職者的受訓成本為 200 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 600 法幣 (c = 600)。" 
-                instructions_text_3 = "本階段的<b>第 11 回合至第 20 回合</b>， <b>GREEN</b> 求職者的受訓成本為 200 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 200 法幣 (c = 200)。"   
+                instructions_text_2 = "本階段的<b>第 1 回合至第 10 回合</b>， <b>GREEN</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 <b>600</b> 法幣 (c = 600)。" 
+                instructions_text_3 = "本階段的<b>第 11 回合至第 20 回合</b>， <b>GREEN</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)。"   
                 instructions_text_4 = "本階段雇主<b>可以看見</b>配對到的求職者之類別。"  
         elif self.round_number == 1+self.subsession.num_first_stage_rounds:
                 instructions_text = "您即將進入實驗的第二階段。"
-                instructions_text_2 = "本階段 <b>GREEN</b> 求職者的受訓成本為 200 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 200 法幣 (c = 200)"
+                instructions_text_2 = "本階段 <b>GREEN</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)，<b>PURPLE</b> 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)"
                 if self.subsession.treatment == 11:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」</b>的訊息，訊息成本為 100 法幣。"
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」</b>的訊息，訊息成本為 <b>100</b> 法幣。"
                 elif self.subsession.treatment == 10:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
                 elif self.subsession.treatment == 1:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以傳送<b>「我願意投入受訓」的</b>訊息，訊息成本為 100 法幣。"
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以傳送<b>「我願意投入受訓」的</b>訊息，訊息成本為 <b>100</b> 法幣。"
                 else:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"
 
