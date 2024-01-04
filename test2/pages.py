@@ -429,11 +429,11 @@ class Firm(Page):
         # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
         # fourth_stage_start = (
         #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
-        if second_stage_start < self.subsession.round_number <= fourth_stage_start and self.group.worker_color == 'PURPLE':
-            table_invest_hire = "{0} - c, {1} + s".format(str(C.WORKER_HIRE_INVEST),
-                                                          str(C.FIRM_HIRE_INVEST))
-            table_not_invest_hire = "{0}, {1} + s".format(str(C.WORKER_HIRE_NOT_INVEST),
-                                                          str(C.FIRM_HIRE_NOT_INVEST))
+        # if second_stage_start < self.subsession.round_number <= fourth_stage_start and self.group.worker_color == 'PURPLE':
+        #     table_invest_hire = "{0} - c, {1} + s".format(str(C.WORKER_HIRE_INVEST),
+        #                                                   str(C.FIRM_HIRE_INVEST))
+        #     table_not_invest_hire = "{0}, {1} + s".format(str(C.WORKER_HIRE_NOT_INVEST),
+        #                                                   str(C.FIRM_HIRE_NOT_INVEST))
 
         green_cost = 0
         purple_cost = 0
@@ -585,7 +585,7 @@ class Instructions(Page):
                 instructions_text = "您即將進入實驗的第二階段。"
                 instructions_text_2 = "本階段 GREEN 求職者的受訓成本為 200 法幣 (c = 200)，PURPLE 求職者的受訓成本為 200 法幣 (c = 200)"
                 if self.subsession.treatment == 11:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」<b>的訊息，訊息成本為 100 法幣。"
+                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」</b>的訊息，訊息成本為 100 法幣。"
                 elif self.subsession.treatment == 10:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
                 elif self.subsession.treatment == 1:
