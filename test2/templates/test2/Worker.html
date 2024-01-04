@@ -308,17 +308,56 @@
 
 {% block scripts %}
 <script>
-    let allRadios = document.querySelectorAll('input[type=radio]');
+    let allRadios = document.querySelectorAll('input[type=radio]')
     let allAdditionalChoiceSpans = document.querySelectorAll('span[id^="additional-choice-"]');
     let allMessages = document.querySelectorAll('div[id^="messages-"]');
-    let form = document.getElementById('form');
 
-    form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
+    function submitForm() {
+        let form = document.getElementById('form');
+        form.addEventListener('submit', function (event) {
+            // Check if the form is valid
+            if (form.checkValidity()) {
+                // Clear the custom validity for the firm_hire field
+                document.querySelectorAll('form *').forEach(field => {
+                    field.setCustomValidity('');
+                });
+            } else {
+                // Handle the case where the form is still invalid
+                alert('請完整回答再送出');
+                event.preventDefault(); // Prevent form submission
+            }
+        });
+        
+        // Check if the dropdown is empty
+        let dropdownValues = Array.from(allAdditionalChoiceSpans)
+            .map(span => span.querySelector('select').value)
+            .filter(value => value !== '');
+
+        // Check if all required fields are filled
+        let isFormValid = Array.from(form.elements)
+            .filter(field => field.hasAttribute('required'))
+            .every(field => field.checkValidity());
+
+        if (dropdownValues.length === 0 || !isFormValid) {
+            // Display a custom alert or handle the case where the form is incomplete
             alert('請完整回答再送出');
-            event.preventDefault(); // Prevent form submission
+            return;
         }
-    });
+
+        // Get the smallest amount checked on the right
+        let formField = document.querySelector('[name="worker_hiring_belief"]');
+        let smallestAmountCheckedRight = parseInt(formField.value) || 0;
+
+        // Calculate the new firm_investment_belief value
+        let calculatedValue = smallestAmountCheckedRight * 10;
+        calculatedValue += parseInt(dropdownValues[0]);
+
+        // Update the hidden input value
+        forminputs.worker_hiring_belief.value = calculatedValue;
+
+        // Proceed with form submission
+        form.submit();
+    }
 
     function onRadioClick(evt) {
         let clickedRadio = evt.target;
@@ -338,14 +377,17 @@
             }
         }
 
+        // Hide all other dropdowns
         for (let span of allAdditionalChoiceSpans) {
             span.style.display = 'none';
         }
         for (let message of allMessages) {
             message.style.display = 'none';
         }
+        // Show the dropdown for the checked amount or the current amount on left click
         let amount = clickedRadio.dataset.amount;
 
+        // Exclude firm_hire from triggering the dropdown
         if (clickedRadio.name !== 'worker_invest') {
             if (clickedRightRadio && amount > 0) {
                 document.getElementById('additional-choice-' + (amount - 1)).style.display = 'inline-block';
@@ -358,9 +400,46 @@
     }
 
     document.addEventListener("DOMContentLoaded", function (event) {
-        for (let radio of document.querySelectorAll('input[type=radio]')) {
-            radio.onchange = onRadioClick;
+        // Change the error message for the firm_hire field
+        let workerField = document.getElementsByName('worker_invest')[0];
+        if (workerField) {
+            workerField.addEventListener('invalid', function (event) {
+                event.preventDefault();
+                // Customize the error message or set it to an empty string to remove it
+                event.target.setCustomValidity('Your custom error message goes here');
+            });
         }
     });
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+        for (let radio of document.querySelectorAll('input[type=radio]')) {
+            // Exclude "firm_hire" from the click event
+            if (radio.name !== 'worker_invest') {
+                radio.onchange = onRadioClick;
+            }
+        }
+
+        let radios = document.querySelectorAll('input[type=radio][value="right"]');
+        for (let radio of radios) {
+            radio.addEventListener('change', function () {
+                let amount = radio.getAttribute('data-amount');
+                let additionalChoiceSpan = document.getElementById('additional-choice-' + amount);
+                let message = document.getElementById('messages-' + amount);
+                // Exclude "firm_hire" from the change event
+                if (radio.name !== 'worker_invest') {
+                    // Check if the clicked radio is 'right' and amount is greater than 0
+                    // If true, display the dropdown for the preceding amount
+                    if (radio.checked && amount > 0) {
+                        document.getElementById('additional-choice-' + (amount - 1)).style.display = 'inline-block';
+                        document.getElementById('messages-' + (amount - 1)).style.display = 'block';
+                    } else {
+                        additionalChoiceSpan.style.display = 'none';
+                        message.style.display = 'none';
+                    }
+                }
+            });
+        }
+    });
+
 </script>
 {% endblock %}
