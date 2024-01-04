@@ -22,11 +22,8 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = 2
     # the number of rounds to play - should be a multiple of 4
     NUM_ROUNDS = 40
-    FIRST_COST_OF_TRAINING_GREEN = 200
-    FIRST_COST_OF_TRAINING_PURPLE = 600
-    SECOND_COST_OF_TRAINING = 200
-    THIRD_COST_OF_TRAINING = 200
-    FOURTH_COST_OF_TRAINING = 200
+    LOW_COST_OF_TRAINING = 200
+    HIGH_COST_OF_TRAINING = 600
     SIGNALING_COST = 100
     WORKER_HIRE_INVEST = 1800
     WORKER_HIRE_NOT_INVEST = 1400
@@ -45,9 +42,6 @@ class Computer_Number(Page):
     form_fields = ['computer_num']
     def is_displayed(self):
         second_stage_start = self.subsession.num_first_stage_rounds
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        fourth_stage_start = (
-            self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
         return self.round_number == 1
 
 class Begin_Experiment(Page):
@@ -55,9 +49,9 @@ class Begin_Experiment(Page):
     form_fields = []
     def is_displayed(self):
         second_stage_start = self.subsession.num_first_stage_rounds
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        fourth_stage_start = (
-            self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
+        # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
+        # fourth_stage_start = (
+        #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
         return self.round_number == 1
 
     def vars_for_template(self):
@@ -131,14 +125,14 @@ class Reveal_Signal(Page):
         table_not_invest_not_hire = "{0},{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
         second_stage_start = self.subsession.num_first_stage_rounds
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        fourth_stage_start = (
-            self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
-        if third_stage_start < self.subsession.round_number <= fourth_stage_start and self.group.worker_color == 'PURPLE':
-            table_invest_hire = "{0} - c, {1} + s".format(str(C.WORKER_HIRE_INVEST),
-                                                          str(C.FIRM_HIRE_INVEST))
-            table_not_invest_hire = "{0}, {1} + s".format(str(C.WORKER_HIRE_NOT_INVEST),
-                                                          str(C.FIRM_HIRE_NOT_INVEST))
+        # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
+        # fourth_stage_start = (
+        #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
+        # if third_stage_start < self.subsession.round_number <= fourth_stage_start and self.group.worker_color == 'PURPLE':
+        #     table_invest_hire = "{0} - c, {1} + s".format(str(C.WORKER_HIRE_INVEST),
+        #                                                   str(C.FIRM_HIRE_INVEST))
+        #     table_not_invest_hire = "{0}, {1} + s".format(str(C.WORKER_HIRE_NOT_INVEST),
+        #                                                   str(C.FIRM_HIRE_NOT_INVEST))
 
         green_cost = 0
         purple_cost = 0
@@ -150,26 +144,23 @@ class Reveal_Signal(Page):
         instructions_text_3 = ""
 
         stage_num = 0
-        if 0 < self.round_number <= second_stage_start:
-            green_cost = C.FIRST_COST_OF_TRAINING_GREEN
-            purple_cost = C.FIRST_COST_OF_TRAINING_PURPLE
+        if 0 < self.round_number <= second_stage_start/2:
+            green_cost = C.LOW_COST_OF_TRAINING
+            purple_cost = C.HIGH_COST_OF_TRAINING
             stage_num = 1
             stage_round = self.round_number
-        elif second_stage_start < self.round_number <= third_stage_start:
-            green_cost = C.SECOND_COST_OF_TRAINING
-            purple_cost = C.SECOND_COST_OF_TRAINING
+            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
+        elif second_stage_start/2 < self.round_number <= second_stage_start:
+            green_cost = C.LOW_COST_OF_TRAINING
+            purple_cost = C.LOW_COST_OF_TRAINING
+            stage_num = 1
+            stage_round = self.round_number
+            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
+        elif second_stage_start < self.round_number:
+            green_cost = C.LOW_COST_OF_TRAINING
+            purple_cost = C.LOW_COST_OF_TRAINING
             stage_num = 2
             stage_round = self.round_number - second_stage_start
-        elif third_stage_start < self.round_number <= fourth_stage_start:
-            green_cost = C.THIRD_COST_OF_TRAINING
-            purple_cost = C.THIRD_COST_OF_TRAINING
-            stage_num = 3
-            stage_round = self.round_number - third_stage_start
-        elif fourth_stage_start < self.round_number <= self.subsession.num_rounds:
-            green_cost = C.FOURTH_COST_OF_TRAINING
-            purple_cost = C.FOURTH_COST_OF_TRAINING
-            stage_num = 4
-            stage_round = self.round_number - fourth_stage_start
         return {
             'table_invest_hire': str(table_invest_hire),
             'table_invest_not_hire': str(table_invest_not_hire),
@@ -200,8 +191,8 @@ class Reveal_Signal(Page):
             'stage_round': str(stage_round)
         }
     def is_displayed(self):
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        return self.player.id_in_group == 1 and self.round_number > third_stage_start and self.subsession.treatment != 0 and self.subsession.treatment != -1
+        # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
+        return self.player.id_in_group == 1 and self.round_number > self.subsession.num_first_stage_rounds and self.subsession.treatment != 0 and self.subsession.treatment != -1
 
 class WaitForWorkers(WaitPage):
     wait_for_all_groups = False
@@ -209,8 +200,8 @@ class WaitForWorkers(WaitPage):
     title_text = ""
     body_text = "請稍待求職者做決策，謝謝！" 
     def is_displayed(self):
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        return self.player.id_in_group == 2 and self.round_number > third_stage_start and self.subsession.treatment != 0           
+        # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
+        return self.player.id_in_group == 2 and self.round_number > self.subsession.num_first_stage_rounds and self.subsession.treatment != 0           
         
 class Worker(Page):
     form_model = 'group'
@@ -266,22 +257,19 @@ class Worker(Page):
         self.group.avg_invest_rate_shown = str(round((purple_invest_count + green_invest_count)/(green_count+purple_count) , 2))
         print("views.Worker:  group=" + str(self.group) + ", self.group.worker_color=" + str(self.group.worker_color))
 
-        table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
-        table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
-                                                  str(C.FIRM_HIRE_NOT_INVEST))
-        table_invest_not_hire = "{0} - c, {1}".format(str(C.WORKER_NOT_HIRE_INVEST),
-                                                      str(C.FIRM_NOT_HIRE_INVEST))
-        table_not_invest_not_hire = "{0},{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
-                                                     str(C.FIRM_NOT_HIRE_NOT_INVEST))
+        # table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
+        # table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
+        #                                           str(C.FIRM_HIRE_NOT_INVEST))
+        # table_invest_not_hire = "{0} - c, {1}".format(str(C.WORKER_NOT_HIRE_INVEST),
+        #                                               str(C.FIRM_NOT_HIRE_INVEST))
+        # table_not_invest_not_hire = "{0},{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
+        #                                              str(C.FIRM_NOT_HIRE_NOT_INVEST))
         second_stage_start = self.subsession.num_first_stage_rounds
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        fourth_stage_start = (
-            self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
-        if third_stage_start < self.subsession.round_number <= fourth_stage_start and self.group.worker_color == 'PURPLE':
-            table_invest_hire = "{0} - c, {1} + s".format(str(C.WORKER_HIRE_INVEST),
-                                                          str(C.FIRM_HIRE_INVEST))
-            table_not_invest_hire = "{0}, {1} + s".format(str(C.WORKER_HIRE_NOT_INVEST),
-                                                          str(C.FIRM_HIRE_NOT_INVEST))
+        # if third_stage_start < self.subsession.round_number <= fourth_stage_start and self.group.worker_color == 'PURPLE':
+        #     table_invest_hire = "{0} - c, {1} + s".format(str(C.WORKER_HIRE_INVEST),
+        #                                                   str(C.FIRM_HIRE_INVEST))
+        #     table_not_invest_hire = "{0}, {1} + s".format(str(C.WORKER_HIRE_NOT_INVEST),
+        #                                                   str(C.FIRM_HIRE_NOT_INVEST))
 
         green_cost = 0
         purple_cost = 0
@@ -291,31 +279,26 @@ class Worker(Page):
         worker_reveal_type = ""
 
         stage_num = 0
-        if 0 < self.round_number <= second_stage_start:
-            green_cost = C.FIRST_COST_OF_TRAINING_GREEN
-            purple_cost = C.FIRST_COST_OF_TRAINING_PURPLE
+        if 0 < self.round_number <= second_stage_start/2:
+            green_cost = C.LOW_COST_OF_TRAINING
+            purple_cost = C.HIGH_COST_OF_TRAINING
             stage_num = 1
             stage_round = self.round_number
-        elif second_stage_start < self.round_number <= third_stage_start:
-            green_cost = C.SECOND_COST_OF_TRAINING
-            purple_cost = C.SECOND_COST_OF_TRAINING
+            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
+        elif second_stage_start/2 < self.round_number <= second_stage_start:
+            green_cost = C.LOW_COST_OF_TRAINING
+            purple_cost = C.LOW_COST_OF_TRAINING
+            stage_num = 1
+            stage_round = self.round_number
+            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
+        elif second_stage_start < self.round_number:
+            green_cost = C.LOW_COST_OF_TRAINING
+            purple_cost = C.LOW_COST_OF_TRAINING
             stage_num = 2
             stage_round = self.round_number - second_stage_start
-        elif third_stage_start < self.round_number <= fourth_stage_start:
-            green_cost = C.THIRD_COST_OF_TRAINING
-            purple_cost = C.THIRD_COST_OF_TRAINING                  
-            extra_text_green = " " 
-            extra_text_purple = " "
-            stage_num = 3
-            stage_round = self.round_number - third_stage_start
-        elif fourth_stage_start / 4 < self.round_number:
-            green_cost = C.FOURTH_COST_OF_TRAINING
-            purple_cost = C.FOURTH_COST_OF_TRAINING
-            stage_num = 4
-            stage_round = self.round_number - fourth_stage_start
 
             
-        if third_stage_start < self.round_number and self.session.config['costly_signaling']:
+        if second_stage_start < self.round_number and self.session.config['costly_signaling']:
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
                 worker_send_signal= "您決定傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 100 法幣） 。"             
@@ -346,7 +329,7 @@ class Worker(Page):
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
 
         
-        if third_stage_start < self.round_number and self.session.config['type_disclosure']:
+        if second_stage_start < self.round_number and self.session.config['type_disclosure']:
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:
                 worker_reveal_type= "您決定<b>揭露</b>您的類別。"
@@ -443,10 +426,10 @@ class Firm(Page):
             
 
         second_stage_start = self.subsession.num_first_stage_rounds
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        fourth_stage_start = (
-            self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
-        if third_stage_start < self.subsession.round_number <= fourth_stage_start and self.group.worker_color == 'PURPLE':
+        # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
+        # fourth_stage_start = (
+        #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
+        if second_stage_start < self.subsession.round_number <= fourth_stage_start and self.group.worker_color == 'PURPLE':
             table_invest_hire = "{0} - c, {1} + s".format(str(C.WORKER_HIRE_INVEST),
                                                           str(C.FIRM_HIRE_INVEST))
             table_not_invest_hire = "{0}, {1} + s".format(str(C.WORKER_HIRE_NOT_INVEST),
@@ -464,30 +447,30 @@ class Firm(Page):
         instructions_text_3 = ""
 
         stage_num = 0
-        if 0 < self.round_number <= second_stage_start:
-            green_cost = C.FIRST_COST_OF_TRAINING_GREEN
-            purple_cost = C.FIRST_COST_OF_TRAINING_PURPLE
+        if 0 < self.round_number <= second_stage_start/2:
+            green_cost = C.LOW_COST_OF_TRAINING
+            purple_cost = C.HIGH_COST_OF_TRAINING
             stage_num = 1
             stage_round = self.round_number
             extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
-        elif second_stage_start < self.round_number <= third_stage_start:
-            green_cost = C.SECOND_COST_OF_TRAINING
-            purple_cost = C.SECOND_COST_OF_TRAINING
+        elif second_stage_start/2 < self.round_number <= second_stage_start:
+            green_cost = C.LOW_COST_OF_TRAINING
+            purple_cost = C.LOW_COST_OF_TRAINING
+            stage_num = 1
+            stage_round = self.round_number
+            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
+        elif second_stage_start < self.round_number:
+            green_cost = C.LOW_COST_OF_TRAINING
+            purple_cost = C.LOW_COST_OF_TRAINING
             stage_num = 2
             stage_round = self.round_number - second_stage_start
-            extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
-        elif third_stage_start < self.round_number <= fourth_stage_start:
-            green_cost = C.THIRD_COST_OF_TRAINING
-            purple_cost = C.THIRD_COST_OF_TRAINING
-            stage_num = 3
-            stage_round = self.round_number - third_stage_start
-        elif fourth_stage_start < self.round_number <= self.subsession.num_rounds:
-            green_cost = C.FOURTH_COST_OF_TRAINING
-            purple_cost = C.FOURTH_COST_OF_TRAINING
-            stage_num = 4
-            stage_round = self.round_number - fourth_stage_start
+        # elif fourth_stage_start < self.round_number <= self.subsession.num_rounds:
+        #     green_cost = C.FOURTH_COST_OF_TRAINING
+        #     purple_cost = C.FOURTH_COST_OF_TRAINING
+        #     stage_num = 4
+        #     stage_round = self.round_number - fourth_stage_start
             
-        if third_stage_start < self.round_number and self.session.config['costly_signaling']:            
+        if second_stage_start < self.round_number and self.session.config['costly_signaling']:            
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
                 firm_see_signal= "您配對到的求職者傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 100 法幣） 。"
@@ -519,7 +502,7 @@ class Firm(Page):
             table_not_invest_not_hire = "{0},{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
         
-        if third_stage_start < self.round_number and self.session.config['type_disclosure']:            
+        if second_stage_start < self.round_number and self.session.config['type_disclosure']:            
             worker_choose_reveal = self.group.reveal_type
             if worker_choose_reveal:      
                 if self.group.worker_color == 'GREEN':  
@@ -577,31 +560,30 @@ class Instructions(Page):
     form_fields = []
     def is_displayed(self):
         second_stage_start = self.subsession.num_first_stage_rounds
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        fourth_stage_start = (
-            self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
-        return self.round_number == 1 or self.round_number == 1+self.subsession.num_first_stage_rounds or self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds or self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds
+        # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
+        # fourth_stage_start = (
+        #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
+        return self.round_number == 1 or self.round_number == 1+self.subsession.num_first_stage_rounds 
+        # or self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds or self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds
 
     def vars_for_template(self):
 
         instructions_text = ""
         instructions_text_2 = ""
         instructions_text_3 = ""
+        instructions_text_4 = ""
         second_stage_start = self.subsession.num_first_stage_rounds
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        fourth_stage_start = (
-            self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
+        # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
+        # fourth_stage_start = (
+        #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
         if self.round_number == 1:
                 instructions_text = "您即將進入實驗的第一階段。"
-                instructions_text_2 = "本階段 GREEN 求職者的受訓成本為 200 法幣 (c = 200)，PURPLE 求職者的受訓成本為 600 法幣 (c = 600)。" 
-                instructions_text_3 = "本階段雇主<b>可以看見</b>配對到的求職者之類別。"  
+                instructions_text_2 = "本階段第 1 回合至第 10 回合 GREEN 求職者的受訓成本為 200 法幣 (c = 200)，PURPLE 求職者的受訓成本為 600 法幣 (c = 600)。" 
+                instructions_text_3 = "本階段第 11 回合至第 20 回合 GREEN 求職者的受訓成本為 200 法幣 (c = 200)，PURPLE 求職者的受訓成本為 200 法幣 (c = 200)。"   
+                instructions_text_4 = "本階段雇主<b>可以看見</b>配對到的求職者之類別。"  
         elif self.round_number == 1+self.subsession.num_first_stage_rounds:
                 instructions_text = "您即將進入實驗的第二階段。"
-                instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
-                instructions_text_3 = "本階段雇主<b>可以看見</b>配對到的求職者之類別。"
-        elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds:
-                instructions_text = "您即將進入實驗的第三階段。"
-                instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
+                instructions_text_2 = "本階段 GREEN 求職者的受訓成本為 200 法幣 (c = 200)，PURPLE 求職者的受訓成本為 200 法幣 (c = 200)"
                 if self.subsession.treatment == 11:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」<b>的訊息，訊息成本為 100 法幣。"
                 elif self.subsession.treatment == 10:
@@ -610,22 +592,35 @@ class Instructions(Page):
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以傳送<b>「我願意投入受訓」的</b>訊息，訊息成本為 100 法幣。"
                 else:
                     instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"
-        elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds:            
-                instructions_text = "您即將進入實驗的第四階段。"
-                instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
-                if self.subsession.treatment == 11:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」<b>的訊息，訊息成本為 100 法幣。"
-                elif self.subsession.treatment == 10:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
-                elif self.subsession.treatment == 1:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以傳送<b>「我願意投入受訓」的</b>訊息，訊息成本為 100 法幣。"
-                else:
-                    instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"        
+
+        # elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds:
+        #         instructions_text = "您即將進入實驗的第三階段。"
+        #         instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
+        #         if self.subsession.treatment == 11:
+        #             instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」<b>的訊息，訊息成本為 100 法幣。"
+        #         elif self.subsession.treatment == 10:
+        #             instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
+        #         elif self.subsession.treatment == 1:
+        #             instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以傳送<b>「我願意投入受訓」的</b>訊息，訊息成本為 100 法幣。"
+        #         else:
+        #             instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"
+        # elif self.round_number == 1+self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds:            
+        #         instructions_text = "您即將進入實驗的第四階段。"
+        #         instructions_text_2 = "本階段所有求職者的受訓成本為 200 法幣 (c = 200)。"
+        #         if self.subsession.treatment == 11:
+        #             instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」<b>的訊息，訊息成本為 100 法幣。"
+        #         elif self.subsession.treatment == 10:
+        #             instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別。"
+        #         elif self.subsession.treatment == 1:
+        #             instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以傳送<b>「我願意投入受訓」的</b>訊息，訊息成本為 100 法幣。"
+        #         else:
+        #             instructions_text_3 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。"        
 
         return {
             'instructions_text': instructions_text,
             'instructions_text_2': instructions_text_2,
             'instructions_text_3': instructions_text_3
+            'instructions_text_4': instructions_text_4
         }
 
 class TaskWaitPage(WaitPage):
@@ -664,22 +659,22 @@ class Results(Page):
         return self.round_number <= self.subsession.num_rounds
     def vars_for_template(self):
         second_stage_start = self.subsession.num_first_stage_rounds
-        third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
-        fourth_stage_start = (
-            self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
+        # third_stage_start = (self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds)
+        # fourth_stage_start = (
+        #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
 
         if 0 < self.round_number <= second_stage_start:
             stage_num = 1
             stage_round = self.round_number
-        elif second_stage_start < self.round_number <= third_stage_start:
+        elif second_stage_start < self.round_number :
             stage_num = 2
             stage_round = self.round_number - second_stage_start
-        elif third_stage_start < self.round_number <= fourth_stage_start:
-            stage_num = 3
-            stage_round = self.round_number - third_stage_start
-        elif fourth_stage_start < self.round_number <= self.subsession.num_rounds:
-            stage_num = 4
-            stage_round = self.round_number - fourth_stage_start
+        # elif third_stage_start < self.round_number <= fourth_stage_start:
+        #     stage_num = 3
+        #     stage_round = self.round_number - third_stage_start
+        # elif fourth_stage_start < self.round_number <= self.subsession.num_rounds:
+        #     stage_num = 4
+        #     stage_round = self.round_number - fourth_stage_start
         your_decision = ""
         their_decision = ""  
         your_payoff = ""

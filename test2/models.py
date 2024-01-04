@@ -30,11 +30,8 @@ class C(BaseConstants):
     PLAYERS_PER_GROUP = 2
     # the number of rounds to play - should be a multiple of 4
     NUM_ROUNDS = 40
-    FIRST_COST_OF_TRAINING_GREEN = 200
-    FIRST_COST_OF_TRAINING_PURPLE = 600
-    SECOND_COST_OF_TRAINING = 200
-    THIRD_COST_OF_TRAINING = 200
-    FOURTH_COST_OF_TRAINING = 200
+    LOW_COST_OF_TRAINING = 200
+    HIGH_COST_OF_TRAINING = 600
     SIGNALING_COST = 100
     WORKER_HIRE_INVEST = 1800
     WORKER_HIRE_NOT_INVEST = 1400
@@ -57,8 +54,8 @@ class Subsession(BaseSubsession):
     use_worker_belief_elicitation = models.BooleanField(initial=True)
     num_first_stage_rounds = models.IntegerField(initial=0)
     num_second_stage_rounds = models.IntegerField(initial=0)
-    num_third_stage_rounds = models.IntegerField(initial=0)
-    num_fourth_stage_rounds = models.IntegerField(initial=0)
+    # num_third_stage_rounds = models.IntegerField(initial=0)
+    # num_fourth_stage_rounds = models.IntegerField(initial=0)
     num_rounds = models.IntegerField(initial=0)
     treatment = models.IntegerField(initial=-1)
     purple_majority = models.IntegerField(initial=-1)
@@ -99,18 +96,19 @@ class Subsession(BaseSubsession):
         else:
             self.num_second_stage_rounds = 1
 
-        if 'num_third_stage_rounds' in self.session.config:
-            self.num_third_stage_rounds = self.session.config['num_third_stage_rounds']
-        else:
-            self.num_third_stage_rounds = 1
+        # if 'num_third_stage_rounds' in self.session.config:
+        #     self.num_third_stage_rounds = self.session.config['num_third_stage_rounds']
+        # else:
+        #     self.num_third_stage_rounds = 1
 
-        if 'num_fourth_stage_rounds' in self.session.config:
-            self.num_fourth_stage_rounds = self.session.config['num_fourth_stage_rounds']
-        else:
-            self.num_fourth_stage_rounds = 1
+        # if 'num_fourth_stage_rounds' in self.session.config:
+        #     self.num_fourth_stage_rounds = self.session.config['num_fourth_stage_rounds']
+        # else:
+        #     self.num_fourth_stage_rounds = 1
 
-        self.num_rounds = self.num_first_stage_rounds + self.num_second_stage_rounds + self.num_third_stage_rounds \
-                          + self.num_fourth_stage_rounds
+        self.num_rounds = self.num_first_stage_rounds + self.num_second_stage_rounds 
+        # + self.num_third_stage_rounds \
+        #                   + self.num_fourth_stage_rounds
 
         # assign the players into groups, make it so that players with even IDs are always
         # workers and odd IDs are always firms
@@ -189,23 +187,20 @@ class Subsession(BaseSubsession):
       
 
         # set up the correct payoff vars and cost_of_training for each group (based on treatment and worker color)
-        third_stage_start = (self.num_first_stage_rounds + self.num_second_stage_rounds)
-        fourth_stage_start = (self.num_first_stage_rounds + self.num_second_stage_rounds + self.num_third_stage_rounds)
+        # third_stage_start = (self.num_first_stage_rounds + self.num_second_stage_rounds)
+        # fourth_stage_start = (self.num_first_stage_rounds + self.num_second_stage_rounds + self.num_third_stage_rounds)
         for g in self.get_groups():
             g.round_num = self.round_number
             g.use_firm_belief = self.use_firm_belief_elicitation
             g.use_worker_belief = self.use_worker_belief_elicitation
-            if 0 < self.round_number <= self.num_first_stage_rounds:
+            
+            if 0<self.round_number*2 <= self.num_first_stage_rounds:
                 if g.worker_color == 'GREEN':
-                    g.cost_of_training = C.FIRST_COST_OF_TRAINING_GREEN
+                    g.cost_of_training = C.LOW_COST_OF_TRAINING
                 elif g.worker_color == 'PURPLE':
-                    g.cost_of_training = C.FIRST_COST_OF_TRAINING_PURPLE
-            elif self.num_first_stage_rounds < self.round_number <= third_stage_start:
-                g.cost_of_training = C.SECOND_COST_OF_TRAINING
-            elif third_stage_start < self.round_number <= fourth_stage_start:
-                g.cost_of_training = C.THIRD_COST_OF_TRAINING               
-            elif fourth_stage_start < self.round_number <= self.num_rounds:
-                g.cost_of_training = C.FOURTH_COST_OF_TRAINING               
+                    g.cost_of_training = C.HIGH_COST_OF_TRAINING
+            else:
+                g.cost_of_training = C.LOW_COST_OF_TRAINING
 
 class Player(BasePlayer):
     def role(self):
