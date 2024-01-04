@@ -619,7 +619,7 @@ class Instructions(Page):
         return {
             'instructions_text': instructions_text,
             'instructions_text_2': instructions_text_2,
-            'instructions_text_3': instructions_text_3
+            'instructions_text_3': instructions_text_3,
             'instructions_text_4': instructions_text_4
         }
 
