@@ -399,17 +399,6 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function (event) {
-        // Change the error message for the firm_hire field
-        let workerField = document.getElementsByName('worker_invest')[0];
-        if (workerField) {
-            workerField.addEventListener('invalid', function (event) {
-                event.preventDefault();
-                // Customize the error message or set it to an empty string to remove it
-                event.target.setCustomValidity('Your custom error message goes here');
-            });
-        }
-    });
 
     document.addEventListener("DOMContentLoaded", function (event) {
         for (let radio of document.querySelectorAll('input[type=radio]')) {
