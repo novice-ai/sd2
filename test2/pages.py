@@ -301,7 +301,7 @@ class Worker(Page):
         if second_stage_start < self.round_number and self.session.config['costly_signaling']:
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
-                worker_send_signal= "您決定傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 100 法幣） 。"             
+                worker_send_signal= "您決定傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 100 法幣）。"             
                 table_invest_hire = "{0} - c - 100, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0} - 100, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -310,7 +310,7 @@ class Worker(Page):
                 table_not_invest_not_hire = "{0} - 100,{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
             else:
-                worker_send_signal= "您決定<b>不傳送訊息</b>（訊息成本為 100 法幣） 。"            
+                worker_send_signal= "您決定<b>不傳送訊息</b>（訊息成本為 100 法幣）。"            
                 table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -473,7 +473,7 @@ class Firm(Page):
         if second_stage_start < self.round_number and self.session.config['costly_signaling']:            
             worker_choose_send = self.group.send_signal
             if worker_choose_send:
-                firm_see_signal= "您配對到的求職者傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 100 法幣） 。"
+                firm_see_signal= "您配對到的求職者傳送<b>「我願意投入受訓」</b>之訊息（訊息成本為 100 法幣）。"
                 table_invest_hire = "{0} - c - 100, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0} - 100, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
@@ -482,7 +482,7 @@ class Firm(Page):
                 table_not_invest_not_hire = "{0}-100,{1}".format(str(C.WORKER_NOT_HIRE_NOT_INVEST),
                                                      str(C.FIRM_NOT_HIRE_NOT_INVEST))
             else:
-                firm_see_signal= "您配對到的求職者<b>未傳送訊息</b>（訊息成本為 100 法幣） 。"
+                firm_see_signal= "您配對到的求職者<b>未傳送訊息</b>（訊息成本為 100 法幣）。"
                 table_invest_hire = "{0} - c, {1}".format(str(C.WORKER_HIRE_INVEST), str(C.FIRM_HIRE_INVEST))
                 table_not_invest_hire = "{0}, {1}".format(str(C.WORKER_HIRE_NOT_INVEST),
                                                   str(C.FIRM_HIRE_NOT_INVEST))
