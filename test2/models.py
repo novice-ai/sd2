@@ -25,7 +25,7 @@ training.
 
 
 class C(BaseConstants):
-    NAME_IN_URL = 'test'
+    NAME_IN_URL = 'test2'
     # number of players in a group - should be a multiple of 2 (6)
     PLAYERS_PER_GROUP = 2
     # the number of rounds to play - should be a multiple of 4
