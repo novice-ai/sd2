@@ -32,7 +32,7 @@ SESSION_CONFIG_DEFAULTS = {
     # 'num_third_stage_rounds': 10,
     # 'num_fourth_stage_rounds': 10,
     'real_world_currency_per_point': 1/7,
-    'app_sequence': ['test'],
+    'app_sequence': ['test2'],
     'participation_fee': 100,
     'type_disclosure': True,
     'costly_signaling': True,
