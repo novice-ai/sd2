@@ -576,15 +576,15 @@ class Instructions(Page):
         #     self.subsession.num_first_stage_rounds + self.subsession.num_second_stage_rounds + self.subsession.num_third_stage_rounds)
         if self.round_number == 1:
                 instructions_text = "您即將進入實驗的第一階段。"
-                instructions_text_2 = "在第一階段，從第 1 回合開始:
-                instructions_text_3 = "GREEN 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)。
+                instructions_text_2 = "在第一階段，從第 1 回合開始:"
+                instructions_text_3 = "GREEN 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)。"
                 instructions_text_4 = "PURPLE 求職者的受訓成本為 <b>600</b> 法幣 (c = 600)。" 
                 instructions_text_5 = "從第 11 回合開始，PURPLE 求職者的受訓成本改為 <b>200</b> 法幣 (c = 200)。"  
                 instructions_text_6 = "本階段雇主<b>可以看見</b>配對到的求職者之類別。"  
         elif self.round_number == 1+self.subsession.num_first_stage_rounds:
                 instructions_text = "您即將進入實驗的第二階段。"
-                instructions_text_2 = "本階段 GREEN 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)。
-                instructions_text_3 = "本階段 PURPLE 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)。                
+                instructions_text_2 = "本階段 GREEN 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)。"
+                instructions_text_3 = "本階段 PURPLE 求職者的受訓成本為 <b>200</b> 法幣 (c = 200)。"                
                 if self.subsession.treatment == 11:
                     instructions_text_4 = "本階段雇主<b>不會看見</b>配對到的求職者之類別。求職者可以決定主動<b>揭露</b>其類別，亦可傳送<b>「我願意投入受訓」</b>的訊息，訊息成本為 <b>100</b> 法幣。"
                 elif self.subsession.treatment == 10:
