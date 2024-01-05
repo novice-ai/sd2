@@ -453,7 +453,7 @@ class Firm(Page):
             if self.group.worker_color == 'GREEN':
                 extra_text_type = "您配對到 <b>GREEN</b> 求職者。"
             else:
-                extra_text_type = "您配對到 <b>PURPLE</b> 求職者>。"
+                extra_text_type = "您配對到 <b>PURPLE</b> 求職者。"
             # extra_text_type = "您配對到 " + str(self.group.worker_color) + " 的求職者。"
         elif second_stage_start < self.round_number:
             green_cost = C.LOW_COST_OF_TRAINING
