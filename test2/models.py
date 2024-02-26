@@ -254,7 +254,7 @@ class Player(BasePlayer):
             total_payoff = 0            
             if self.subsession.round_number == 1:        
                 if self.belief_round == 1:
-                    if player.role() == 'Worker':
+                    if self.id_in_group == 1:
                         if self.group.worker_hiring_belief > self.lottery_1:
                             if self.group.firm_hire:
                                 self.belief_payoff = 200
@@ -300,14 +300,14 @@ class Player(BasePlayer):
                                 self.belief_payoff = 0
                 
                 if self.paying_round == 1:
-                    if player.role() == 'Worker':
+                    if self.id_in_group == 1:
                         self.final_normal_payoff = self.group.worker_normal_payoff
                     else:
                         self.final_normal_payoff = self.group.firm_normal_payoff
             elif self.subsession.round_number > 1:
                 last_round_player = self.in_round(self.round_number - 1)
                 if self.subsession.round_number == self.paying_round:
-                    if player.role() == 'Firm':                 
+                    if self.id_in_group == 2:                 
                         self.final_normal_payoff = self.group.firm_normal_payoff
                     else:
                         self.final_normal_payoff = self.group.worker_normal_payoff
@@ -315,7 +315,7 @@ class Player(BasePlayer):
                     self.final_normal_payoff = last_round_player.final_normal_payoff
                     
                 if self.subsession.round_number == self.belief_round:
-                    if player.role() == 'Worker':
+                    if self.id_in_group == 1:
                         if self.group.worker_hiring_belief > self.lottery_1:
                             if self.group.firm_hire:
                                 self.belief_payoff = 200
